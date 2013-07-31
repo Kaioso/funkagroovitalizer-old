@@ -1,0 +1,1 @@
+java -classpath pircbot.jar;. FBotMain 208.185.81.252 6668 ftest Celizic

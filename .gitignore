@@ -1,0 +1,13 @@
+# IntelliJ project files
+
+*.idea
+*.iml
+out
+
+# Netbeans project files
+
+build
+dist
+nbproject
+build.xml
+manifest.mf
