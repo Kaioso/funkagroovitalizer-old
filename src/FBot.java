@@ -171,14 +171,8 @@ public class FBot extends PircBot
 				sendAction( sender, result );
 			}
        	}
-   	    else if ( args[0].equalsIgnoreCase("!aarnrace") )
-   	   	{
-   	    	sendMessage( sender, "Your randomly determined race is: " + aarnRace( false, false, "" ) );
-   	    }
-    	else if ( args[0].equalsIgnoreCase("!currentgm") )
-    	{
-    	   		sendMessage(sender, listGm() );
-    	}
+   	    else if ( args[0].equalsIgnoreCase("!aarnrace") ) { sendMessage( sender, "Your randomly determined race is: " + aarnRace( false, false, "" ) ); }
+    	else if ( args[0].equalsIgnoreCase("!currentgm") ) { sendMessage(sender, listGm() ); }
 		else if ( args[0].equalsIgnoreCase("!join"))
 		{
 			if ( args.length < 2 )
@@ -189,97 +183,15 @@ public class FBot extends PircBot
 			joinChannel( args[1] );
 			sendAction( args[1], getJoin(sender) );
 		}
-       	else if ( args[0].equalsIgnoreCase("!stats") )
-       	{
-       		int first=1;
-       		int second=1;
-       		boolean idiot = false;
-       		if ( args.length < 3 )
-       		{
-       			sendMessage( sender, "Useage:  !stats <size of dice> <number of rolls>" );
-       		}
-       		else
-       		{
-				try
-				{
-					first = Integer.parseInt( args[1] );
-					second = Integer.parseInt( args[2] );
-				}
-				catch (Exception e)
-				{
-					idiot = true;
-					sendMessage( sender, "Useage:  !stats <size of dice> <number of rolls>" );
-				}
-				if (idiot)
-				{
-					sendMessage( sender, "Useage:  !stats <size of dice> <number of rolls>" );
-				}
-				else
-				{
-					sendMessage( sender, Dice.statRun(first, second) );
-				}
-       		}
-       	}
-       	else if ( args[0].equalsIgnoreCase("!value") )
-       	{
-       		sendMessage( sender, pointValue(args) );
-       	}
-      	else if ( args[0].equalsIgnoreCase("!inventory") )
-      	{
-      		sendMessage(sender, pot.playerStatus(sender) );
-      	}
-      	else if ( args[0].equalsIgnoreCase("!potstatus") )
-      	{
-      		sendMessage( sender, pot.chipCount() );
-      	}
-      	else if ( args[0].equalsIgnoreCase("!fudge") )
-		{
-			String mod = "";
-			if ( args.length < 2 )
-				mod = "Mediocre";
-			else
-				mod = args[1];
-			sendAction( sender, Fudge.roll( sender, mod ) );
-		}
-      	else if ( args[0].equalsIgnoreCase("!fate") )
-		{
-			String mod = "";
-			if ( args.length < 2 )
-				mod = "Mediocre";
-			else
-				mod = args[1];
-			sendAction( sender, Fate.roll( sender, mod ) );
-		}
-    	else if ( args[0].equalsIgnoreCase("!sr") )
-    	{
-  			String result = shadowRoller( message, sender );
-  			if ( result.startsWith("Use") )
-   				sendMessage(sender, result );
-   			else
-   				sendAction(sender, result);
-   	}
-    	else if ( args[0].equalsIgnoreCase("!exalted") )
-    	{
-  			String result = Dice.exaltRoller( message, sender );
-  			if ( result.startsWith("Use") )
-   				sendMessage(sender, result );
-   			else
-   				sendAction(sender, result);
-   	}
-		else if ( args[0].equalsIgnoreCase("!soundfile") )
-		{
-			if (args.length<2)
-			{
-				sendMessage(sender, "Useage:  !soundfile filename.wav you must have the file in the appropraite folder for your IRC client to play.");
-				return;
-			}
-			if (!hasProfile(sender))
-				addProfile(sender);
-			setSFile(sender,args[1]);
-			sendMessage(sender, "Sound file for " + sender + " has been set.  If you are running mirc it should be located in your mirc/sound/ folder.");
-			saveProfiles();
-			return;
-		}
+       	else if ( args[0].equalsIgnoreCase("!stats") ) { showStats(args, sender); }
+       	else if ( args[0].equalsIgnoreCase("!value") ) { sendMessage( sender, pointValue(args) ); }
+      	else if ( args[0].equalsIgnoreCase("!inventory") ) { sendMessage(sender, pot.playerStatus(sender) ); }
+      	else if ( args[0].equalsIgnoreCase("!potstatus") ) { sendMessage( sender, pot.chipCount() ); }
+      	else if ( args[0].equalsIgnoreCase("!fudge") ) { fudgeDice(args, sender, sender); }
+      	else if ( args[0].equalsIgnoreCase("!fate") ) { fateDice(args, sender, sender); }
+    	else if ( args[0].equalsIgnoreCase("!sr") ) { shadowrunDice(message, sender, sender); }
+    	else if ( args[0].equalsIgnoreCase("!exalted") ) { exaltedDice(message, sender, sender); }
+		else if ( args[0].equalsIgnoreCase("!soundfile") ) { setNotifySound(args, sender, sender); }
     	else if ( args[0].equalsIgnoreCase("!roll"))
     	{
     		String daMessage = "";
@@ -358,110 +270,11 @@ public class FBot extends PircBot
 			sendAction( sender, daMessage );
 			return;
     	}
-    	else if ( args[0].equalsIgnoreCase("!hd") )
-    	{
-    		if (args.length <2 )
-    		{
-    			sendMessage( sender, "!hd [number of dice] [modifier] accepts half dice values such as 4.5.  Teal die is half die." );
-    			return;
-    		}
-    		else if ( args.length < 3 )
-    		{
-    			sendAction( sender, Dice.heroDamage(getDouble(args[1]), 0, sender ) );
-    			return;
-    		}
-    		else
-    		{
-    			sendAction( sender, Dice.heroDamage(getDouble(args[1]), getInt(args[2]), sender ) );
-    			return;
-    		}
-    	}
-    	else if ( args[0].equalsIgnoreCase("!ha") )
-    	{
-    		if ( args.length < 2 )
-    		{
-    			sendMessage( sender, "!ha [OCV] Rolls an attack using the HERO system.");
-    			return;
-    		}
-    		else
-    		{
-    			sendAction( sender, Dice.heroAttack( getInt(args[1]), sender )  );
-    			return;
-    		}
-    	}
-	   	else if ( args[0].equalsIgnoreCase("!wg") )
-    	{
-    		if ( args.length < 2 )
-    		{
-    			sendMessage( sender, "!wg [number of dice] [modifier] Makes a roll using Westend Games d6 system." );
-    			return;
-    		}
-    		else if ( args.length < 3 )
-    		{
-    			int dice = getInt(args[1]);
-    			String output = Dice.westDice(dice, 0, sender );
-    			sendAction( sender, output );
-    			return;
-    		}
-    		else
-    		{
-    			int dice = getInt(args[1]);
-    			int mod = getInt(args[2]);
-    			String output = Dice.westDice(dice, mod, sender );
-    			sendAction( sender, output );
-    			return;
-    		}
-    	}
-		else if ( args[0].equalsIgnoreCase("!notify") )
-		{
-			if (args.length<2)
-			{
-				sendMessage(sender, "Useage:  !notify yes/no");
-				return;
-			}
-			if ( args[1].equalsIgnoreCase("yes") || args[1].equalsIgnoreCase("1") || args[1].equalsIgnoreCase("true") || args[1].equalsIgnoreCase("on") )
-			{
-				if (!hasProfile(sender))
-					addProfile(sender);
-				setNotice(sender,true);
-				sendMessage(sender, "Notification turned on for " + sender);
-				saveProfiles();
-				return;
-			}
-			if (args[1].equalsIgnoreCase("no") || args[1].equalsIgnoreCase("0") || args[1].equalsIgnoreCase("false") || args[1].equalsIgnoreCase("off") )
-			{
-				if (!hasProfile(sender))
-					addProfile(sender);
-				setNotice(sender,false);
-				sendMessage(sender, "Notification turned off for " + sender);
-				saveProfiles();
-				return;
-			}
-		}
-		else if ( args[0].equalsIgnoreCase("!sound") )
-		{
-			if (args.length<2)
-			{
-				sendMessage(sender, "Useage:  !sound yes/no be sure to use !soundfile to set a soundfile to play");
-				return;
-			}
-			if ( args[1].equalsIgnoreCase("yes") || args[1].equalsIgnoreCase("1") || args[1].equalsIgnoreCase("true") || args[1].equalsIgnoreCase("on") )
-			{
-				if (!hasProfile(sender))
-					addProfile(sender);
-				setSonic(sender,true);
-				sendMessage(sender, "Sound notification turned on for " + sender+".  Be sure to use !soundfile to set a file to play.");
-				return;
-			}
-			if (args[1].equalsIgnoreCase("no") || args[1].equalsIgnoreCase("0") || args[1].equalsIgnoreCase("false") || args[1].equalsIgnoreCase("off") )
-			{
-				if (!hasProfile(sender))
-					addProfile(sender);
-				setSonic(sender,false);
-				sendMessage(sender, "Sound notification turned off for " + sender);
-				return;
-			}
-		}
+    	else if ( args[0].equalsIgnoreCase("!hd") ) { heroDamage(args, sender, sender); }
+    	else if ( args[0].equalsIgnoreCase("!ha") ) { heroAttack(args, sender, sender); }
+	   	else if ( args[0].equalsIgnoreCase("!wg") ) { westDice(args, sender, sender); }
+		else if ( args[0].equalsIgnoreCase("!notify") ) { notifyPlayer(args, sender, sender); }
+		else if ( args[0].equalsIgnoreCase("!sound") ) { notifyPlayerSound(args, sender, sender); }
    		else if ( args[0].equalsIgnoreCase("!npc"))
    	    {
    	    	if ( args.length < 4 || !isRoll(args[2]) || !hasTable(args[3]) )
@@ -476,30 +289,9 @@ public class FBot extends PircBot
    	    	addTable(x);
    	    	sendAction(sender, "rolled a (" + args[2] + ") for " + args[1] + " and got: " + roll + " added to " + args[3] );
    	    }
-		else if ( args[0].equalsIgnoreCase("!wild") )
-		{
-			String result = wildRoller( message, sender );
-			if ( result.startsWith("Use") )
-				sendMessage( sender, result );
-			else
-				sendAction( sender, result );
-		}
-		else if ( args[0].equalsIgnoreCase("!sw") )
-		{
-			String result = swRoller( message, sender );
-			if ( result.startsWith("Use") )
-				sendMessage( sender, result );
-			else
-				sendAction( sender, result );
-		}
-		else if ( args[0].equalsIgnoreCase("!swarm") )
-		{
-			String result = swSwarm( message, sender );
-			if ( result.startsWith("Use") )
-				sendMessage( sender, result );
-			else
-				sendAction( sender, result );
-		}
+		else if ( args[0].equalsIgnoreCase("!wild") ) { wildDice(message, sender, sender); }
+		else if ( args[0].equalsIgnoreCase("!sw") ) { savageDice(message, sender, sender); }
+		else if ( args[0].equalsIgnoreCase("!swarm") ) { swarmDice(message, sender, sender); }
 		else if ( args[0].equalsIgnoreCase("!rollmod") )
 		{
 			message = message.trim();
@@ -558,173 +350,14 @@ public class FBot extends PircBot
 			}
 
 		}
-		else if (  args[0].equalsIgnoreCase("!list") )
-		{
-			if ( args.length < 2 )
-			{
-				sendMessage( sender, "Useage:  !list <table>" );
-			}
-			else
-			{
-				String s = args[1];
-				if (!hasTable(s))
-				{
-					sendMessage( sender, "Sorry, that table does not exist");
-					return;
-				}
-				RollSort x = getTable(s);
-				x.sortList();
-				String[] output = x.getList();
-				sendMessage( sender, "List for " + s + ":");
-				for ( int i = 0; i < output.length; i++)
-				{
-					sendMessage( sender, output[i] );
-				}
-				return;
-			}
-		}
-		else if ( args[0].equalsIgnoreCase("!hand") )
-		{
-			int[] hand = new int[0];
-			boolean found = false;
-			String report = "";
-			if ( args.length < 2 )
-			{
-				for (int i = 0; i < decks.size(); i++)
-				{
-					Deck deck = decks.get(i);
-					if ( deck.getName().equals( "Master" ) )
-					{
-						i = decks.size();
-						found = true;
-						hand = deck.getHand("sender");
-					}
-				}
-			}
-			else
-			{
-				for (int i = 0; i < decks.size(); i++)
-				{
-					Deck deck = decks.get(i);
-					if ( deck.getName().equals( args[1] ) )
-					{
-						i = decks.size();
-						found = true;
-						hand = deck.getHand("sender");
-					}
-				}
-			}
-			if ( !found )
-			{
-				sendMessage(sender, "Deck not found.");
-				return;
-			}
-
-			if ( hand.length < 1 )
-			{
-				sendMessage(sender, "You have no cards." );
-				return;
-			}
-			for ( int i = 0; i < hand.length; i++)
-			{
-				report = report + " " + Deck.cardName(hand[i]);
-			}
-			sendMessage(sender, "You currently have" + report );
-		}
-		else if ( args[0].equalsIgnoreCase("!magic8ball"))
-		{
-			sendMessage(sender,  magic8Ball() );
-			return;
-		}
-		else if ( args[0].equalsIgnoreCase("!ct") )
-		{
-			if (args.length < 3 )
-			{
-				sendMessage(sender, "Useage:  !ct <skill> <base>" );
-				return;
-			}
-			if ( !isInt(args[1]))
-			{
-				sendMessage(sender, "Useage:  !ct <skill> <base>");
-				return;
-			}
-			if ( !isInt(args[2]))
-			{
-				sendMessage(sender, "Useage:  !ct <skill> <base>");
-				return;
-			}
-			sendAction(sender, cTRoller(getInt(args[1]), getInt(args[2]), sender));
-		}
-		else if ( args[0].equalsIgnoreCase("!cardlist") )
-		{
-			String deck = "Master";
-			Deck d = new Deck();
-			boolean found = false;
-			if ( args.length > 1 )
-				deck = args[1];
-			for (int i = 0; i < decks.size(); i++)
-			{
-				d = decks.get(i);
-				if ( d.getName().equals(deck) )
-				{
-					found = true;
-					i = decks.size();
-				}
-			}
-			if ( !found )
-			{
-				sendMessage(sender, "Deck not found." );
-				return;
-			}
-			String [] report = d.listPlayers();
-			sendMessage(sender, "Cardlist for deck " + deck);
-			for ( int i = report.length-1; i > -1; i--)
-			{
-				sendMessage(sender, report[i] );
-			}
-		}
-		else if ( args[0].equalsIgnoreCase("!cardlist") )
-		{
-			String deck = "Master";
-			Deck d = new Deck();
-			boolean found = false;
-			if ( args.length > 1 )
-				deck = args[1];
-			for (int i = 0; i < decks.size(); i++)
-			{
-				d = decks.get(i);
-				if ( d.getName().equals(deck) )
-				{
-					found = true;
-					i = decks.size();
-				}
-			}
-			if ( !found )
-			{
-				sendMessage(sender, "Deck not found." );
-				return;
-			}
-			String [] report = d.listPlayers();
-			sendMessage(sender, "Cardlist for deck " + deck);
-			for ( int i = report.length-1; i > -1; i--)
-			{
-				sendMessage(sender, report[i] );
-			}
-		}
-		else if ( args[0].equalsIgnoreCase("!chargen") )
-		{
-			String type;
-			if ( args.length < 2 )
-				type = "";
-			else
-				type = args[1];
-			String[] results = genChar(type);
-			for (int i = 0; i < results.length; i++)
-			{
-				sendMessage(sender, results[i]);
-			}
-		}
+		else if (  args[0].equalsIgnoreCase("!list") ) { listInit(args, sender); }
+		else if ( args[0].equalsIgnoreCase("!hand") ) { cardHand(args, sender, sender); }
+		else if ( args[0].equalsIgnoreCase("!magic8ball")) { sendMessage(sender,  magic8Ball() ); }
+		else if ( args[0].equalsIgnoreCase("!ct") ) { ctDice(args, sender, sender); }
+		else if ( args[0].equalsIgnoreCase("!cardlist") ) { cardList(args, sender); }
+		else if ( args[0].equalsIgnoreCase("!chargen") ) { characterGeneration(args, sender); }
    	}
+
    	public void onInvite( String targetNick, String sourceNick, String sourceLogin, String sourceHostname, String channel )
    	{
    		joinChannel( channel );
@@ -910,353 +543,191 @@ public class FBot extends PircBot
    			}
    		}
    	}
+
+    // Pure function
    	public static int rollerInt(String message)
    	//this rolls dice and returns the putput as a number only.
    	//bad input results in a 0
    	//do NOT use without checking with isRoll()
    	//does NOT handle passes xdy+z format only
    	{
-   		message = message.trim();
-   		int amount = 1;
-   		int die;
-   		int mod = 0;
-   		String text = "1";
-   		int modMult = 1;
-   		int total = 0;
-   		int size = 0;
-   		message = message.toLowerCase();
+        message = message.trim().toLowerCase();
+        // Assertion
+        if ( !isRoll(message) )
+            return 0;
 
-   		if ( !isRoll(message) )
-			return 0;
-   		if ( !message.startsWith("d") )
-   		{
-   			String[] stuff = message.split("d");
-	    	try
-	   		{
-	   			amount = Integer.parseInt( stuff[0] );
-	   			message = stuff[1];
-	   		}
-	   		catch(Exception e)
-	   		{
-	  			return 0;
-	   		}
-   		}
-   		else
-   		{
-   			message = message.substring(1);
-   		}
-   		message = message.replace( "+", "�" );
-   		if ( message.indexOf( "-" ) < 0 && message.indexOf( "�" ) < 0 )
-   			message = message.concat( "�0" );
-   		if ( message.indexOf("-") < 0 )
-   		{
-   			String[] stuff = message.split("�");
-   			try
-   			{
-   				die = Integer.parseInt( stuff[0] );
-   				mod = Integer.parseInt( stuff[1] );
-   			}
-   			catch(Exception e)
-   			{
-   				return 0;
-   			}
-   		}
-   		else
-   		{
-   			modMult = -1;
-   			String[] stuff = message.split("-");
-   			try
-   			{
-   				die = Integer.parseInt( stuff[0] );
-   				mod = Integer.parseInt( stuff[1] );
-   			}
-   			catch(Exception e)
-   			{
-   				return 0;
-   			}
-   		}
-   		return Dice.rollDice( amount, die, mod*modMult );
-   	}
-   	public static String swSwarm( String message, String sender)
-   	{
-   		//sw batch roller, for making a lof of attacks as a gm
-   		// in savage worlds
-   		message = message.trim();
-   		String diceChain = "";
-   		int amount = 1;
-   		int i;
-   		int die;
-   		int[] rolls;
-   		boolean isDice = true;
-   		int mod = 0;
-   		String[] args = message.split(" ");
-   		String results = "rolled a ";
-   		String text = "1";
-   		int modMult = 1;
-   		int total = 0;
-   		int size = 0;
+        try
+        {
+            // Section
+            /// The attempt is to split the message via the d; with or without
+            /// This will obtain two parts:
+            /// [number of dice] d [sides of the dice and mod]
 
-   		if ( args.length == 1 )
-   		{
-   			return "Useage:  [x]dy+z [raise]  Max value rolls are rerolled.";
-   		}
-   		if ( args[1].startsWith("d") )
-   		{
-   			args[1] = text.concat( args[1] );
-   		}
-   		else if ( args[1].indexOf( "d" ) < 0 )
-   		{
-   			return "Useage:  [x]dy+z [raise]  Max value rolls are rerolled.";
-   		}
-   		if ( message.endsWith("raise") )
-   			results = results.concat( "(" + args[1] + ") with a raise for " + sender + " and got (" );
-   		else
-   			results = results.concat( "(" + args[1] + ") for " + sender + " and got (" );
-   		args[1] = args[1].replace( "+", "�" );
-   		if ( args[1].indexOf( "-" ) < 0 && args[1].indexOf( "�" ) < 0 )
-   			args[1] = args[1].concat( "�0" );
-   		args = args[1].split("d");
-   		try
-   		{
-   			amount = Integer.parseInt( args[0] );
-   		}
-   		catch(Exception e)
-   		{
-  			return "Useage:  [x]dy+z [raise]  Max value rolls are rerolled.";
-   		}
-   		if ( args[1].indexOf( "�" ) > -1 )
-   			args = args[1].split("�");
-   		else if ( args[1].indexOf( "-" ) > -1 )
-   		{
-   			args = args[1].split("-");
-   			modMult = -1;
-   		}
-   		try
-   		{
-   			die = Integer.parseInt( args[0] );
-   		}
-   		catch(Exception e)
-   		{
-  			return "Useage:  [x]dy+z [raise]  Max value rolls are rerolled.";
-   		}
-   		try
-   		{
-   			mod = Integer.parseInt( args[1] )*modMult;
-   		}
-   		catch(Exception e)
-   		{
-  			return "Useage:  [x]dy+z [raise]  Max value rolls are rerolled.";
-   		}
-   		if ( message.endsWith("raise") )
-   			rolls = new int[amount+1];
-   		else
-   			rolls = new int[amount];
-   		for ( i = 0; i < amount; i++ )
-   		{
-   			rolls[i] = Dice.rollAce( die ) + mod;
-   		}
-   		if ( message.endsWith("raise") )
-   		{
-   			rolls[amount] = Dice.rollAce( 6 );
-   		}
-   		for ( i = 0; i < rolls.length; i++ )
-   		{
-   			diceChain = diceChain.concat( " " + rolls[i] + "" );
-   		}
-   		results = results.concat( diceChain + " )" );
-   		return results;
-   	}
-   	public static String fudge( String sender )
-   	//fudge dice roller
-   	{
-   		//fudge dice have 6 sides and only 3 results
-   		// - blank and +.  In retrospect, I probaly
-   		//should not have gone puritan with 6 sided
-   		//virtual dice, and used d3's but what's done
-   		//is done
-   		int d1 = Dice.rollDice(6);
-   		int d2 = Dice.rollDice(6);
-   		int d3 = Dice.rollDice(6);
-   		int d4 = Dice.rollDice(6);
-   		//now my dice have values
-   		int result = 0;
-   		//at first you have nothing
-   		String message = "rolled for " + sender + " and got( ";
-   		//from this point on it just addresses the dice one
-   		//step at a time, concacting on the result and adjusting
-   		//the total.
-   		if ( d1 == 1 || d1 == 2 )
-   		{
-   			message = message + "- ";
-   			result--;
-   		}
-   		else if ( d1 == 3 || d1 == 4 )
-   		{
-   			message = message + "0 ";
-   		}
-   		else if ( d1 == 5 || d1 == 6 )
-   		{
-   			message = message + "+ ";
-   			result++;
-   		}
-   		if ( d2 == 1 || d2 == 2 )
-   		{
-   			message = message + "- ";
-   			result--;
-   		}
-   		else if ( d2 == 3 || d2 == 4 )
-   		{
-   			message = message + "0 ";
-   		}
-   		else if ( d2 == 5 || d2 == 6 )
-   		{
-   			message = message + "+ ";
-   			result++;
-   		}
-   		if ( d3 == 1 || d3 == 2 )
-   		{
-   			message = message + "- ";
-   			result--;
-   		}
-   		else if ( d3 == 3 || d3 == 4 )
-   		{
-   			message = message + "0 ";
-   		}
-   		else if ( d3 == 5 || d3 == 6 )
-   		{
-   			message = message + "+ ";
-   			result++;
-   		}
-   		if ( d4 == 1 || d4 == 2 )
-   		{
-   			message = message + "- ";
-   			result--;
-   		}
-   		else if ( d4 == 3 || d4 == 4 )
-   		{
-   			message = message + "0 ";
-   		}
-   		else if ( d4 == 5 || d4 == 6 )
-   		{
-   			message = message + "+ ";
-   			result++;
-   		}
-   		message = message + ") For a total of: " + result;
-   		return message;
-   	}
-   	public static String swRoller( String message, String sender)
-   	//savage worlds roller, also does salads and removes unsightly spots.
-   	{
-   		message = message.trim();
-   		String diceChain = "";
-   		int amount = 1;
-   		int i;
-   		int die;
-   		int[] rolls;
-   		boolean isDice = true;
-   		int mod = 0;
-   		String[] args = message.split(" ");
-   		String results = "rolled a ";
-   		String text = "1";
-   		int modMult = 1;
-   		int total = 0;
-   		int size = 0;
+            int numberOfDice = 1;
+            // Truth is easier to understand
+            if ( message.startsWith("d") )
+                // Cutting the d off the message, making the split a single dimensioned array
+                message = message.substring(1);
+            else
+            {
+                // Taking the number of dice off the beginning of the string and making it into a number
+                // then replacing the message without the d
+                String[] bisectOnDieToken = message.split("d");
 
-   		if ( args.length == 1 )
-   		{
-   			return "Useage:  [x]dy+z [raise]  Max value rolls are rerolled.";
-   		}
-   		if ( args[1].startsWith("d") )
-   		{
-   			args[1] = text.concat( args[1] );
-   		}
-   		else if ( args[1].indexOf( "d" ) < 0 )
-   		{
-   			return "Useage:  [x]dy+z [raise]  Max value rolls are rerolled.";
-   		}
-   		if ( message.endsWith("raise") )
-   			results = results.concat( "(" + args[1] + ") with a raise for " + sender + " and got (" );
-   		else
-   			results = results.concat( "(" + args[1] + ") for " + sender + " and got (" );
-   		args[1] = args[1].replace( "+", "�" );
-   		if ( args[1].indexOf( "-" ) < 0 && args[1].indexOf( "�" ) < 0 )
-   			args[1] = args[1].concat( "�0" );
-   		args = args[1].split("d");
-   		try
-   		{
-   			amount = Integer.parseInt( args[0] );
-   		}
-   		catch(Exception e)
-   		{
-  			return "Useage:  [x]dy+z [raise]  Max value rolls are rerolled.";
-   		}
-   		if ( args[1].indexOf( "�" ) > -1 )
-   			args = args[1].split("�");
-   		else if ( args[1].indexOf( "-" ) > -1 )
-   		{
-   			args = args[1].split("-");
-   			modMult = -1;
-   		}
-   		try
-   		{
-   			die = Integer.parseInt( args[0] );
-   		}
-   		catch(Exception e)
-   		{
-  			return "Useage:  [x]dy+z [raise]  Max value rolls are rerolled.";
-   		}
-   		try
-   		{
-   			mod = Integer.parseInt( args[1] )*modMult;
-   		}
-   		catch(Exception e)
-   		{
-  			return "Useage:  [x]dy+z [raise]  Max value rolls are rerolled.";
-   		}
-   		if ( message.endsWith("raise") )
-   			rolls = new int[amount+1];
-   		else
-   			rolls = new int[amount];
-   		for ( i = 0; i < amount; i++ )
-   		{
-   			rolls[i] = Dice.rollAce( die );
-   		}
-   		if ( message.endsWith("raise") )
-   		{
-   			rolls[amount] = Dice.rollAce( 6 );
-   		}
-   		for ( i = 0; i < rolls.length; i++ )
-   		{
-   			diceChain = diceChain.concat( " " + rolls[i] + "" );
-   		}
-   		results = results.concat( diceChain + " ) Total:" );
-   		for ( i = 0; i < rolls.length; i++ )
-   		{
-			total += rolls[i];
-   		}
-   		total += mod;
-   		results = results.concat( " " + total );
-   		return results;
+                numberOfDice = Integer.parseInt( bisectOnDieToken[0] );
+                message = bisectOnDieToken[1];
+            }
+
+            // Decide whether this is addition or subtraction and act accordingly
+            if ( !message.contains( "-" ) && !message.contains( "+" ) ) // If the message does not contain plus or minus
+                message = message.concat( "+0" );
+
+            int modMultiplier = 1;
+            String splitCharacter;
+            if ( message.contains("-") )
+            {
+                splitCharacter = "-";
+                modMultiplier = -1;
+            }
+            else
+                splitCharacter = "\\+";
+
+            String[] bisectOnModifierToken = message.split(splitCharacter);
+            int die = Integer.parseInt( bisectOnModifierToken[0] );
+            int mod = Integer.parseInt( bisectOnModifierToken[1] );
+            return Dice.rollDice( numberOfDice, die, mod*modMultiplier );
+        }
+        catch(Exception e)
+        {
+            return 0;
+        }
    	}
+
+    private static class DiceInfo {
+        public int numberOfDice;
+        public int numberOfSides;
+        public int modifier;
+        public String formula;
+    }
+
+    public static DiceInfo swMessageParse(String message) throws Exception {
+        final String usageErrorMessage = "Useage:  [x]dy+z [raise]  Max value rolls are rerolled.";
+        message = message.trim();
+        String[] args = message.split(" ");
+
+        // Assertion
+        if ( args.length == 1 || !args[1].contains(("d")) )
+            throw new Exception(usageErrorMessage);
+
+
+        // Allows for the single die shorthand
+        if ( args[1].startsWith("d") )
+            args[1] = "1" + args[1];
+        String unmodifiedRoll = args[1];
+
+        boolean hasModifier = args[1].contains( "-" ) || args[1].contains( "+" );
+        if ( !hasModifier )
+            args[1] = args[1].concat( "+0" );
+
+        int modMult = 1;
+        String modSplitCharacter = "\\+";
+        if (args[1].contains("-"))
+        {
+            modSplitCharacter = "-";
+            modMult = -1;
+        }
+
+        String[] dieBisect = args[1].split("d");
+        String[] modifierBisect = dieBisect[1].split(modSplitCharacter);
+        String numberOfDiceAsText = dieBisect[0];
+        String numberOfSidesAsText = modifierBisect[0];
+        String modifierAsText = modifierBisect[1];
+
+        DiceInfo die = new DiceInfo();
+
+        try
+        {
+            die.numberOfDice = Integer.parseInt(numberOfDiceAsText);
+            die.numberOfSides = Integer.parseInt(numberOfSidesAsText);
+            die.modifier = Integer.parseInt(modifierAsText) * modMult;
+            die.formula = unmodifiedRoll;
+        }
+        catch (Exception e)
+        {
+            throw new Exception(usageErrorMessage);
+        }
+        return die;
+    }
+
+   	public static String swSwarm(String message, String sender)
+   	{
+        DiceInfo die;
+        try
+        {
+   		    die = swMessageParse(message);
+        }
+        catch (Exception e)
+        {
+            return e.getMessage();
+        }
+
+        String diceChain = "";
+        for ( int i = 0; i < die.numberOfDice; i++ )
+            diceChain += " " + (Dice.rollAce( die.numberOfSides ) + die.modifier) + "";
+        if ( message.endsWith("raise") )
+        {
+            diceChain += " " + Dice.rollAce( 6 ) + "";
+            return String.format("rolled a (%s) with a raise for %s and got ( %s )", die.formula, sender, diceChain.trim());
+        }
+        else
+            return String.format("rolled a (%s) for %s and got ( %s )", die.formula, sender, diceChain.trim());
+   	}
+
+    public static String swRoller( String message, String sender)
+    //savage worlds roller, also does salads and removes unsightly spots.
+    {
+        DiceInfo die;
+        try
+        {
+            die = swMessageParse(message);
+        }
+        catch (Exception e)
+        {
+            return e.getMessage();
+        }
+
+        String diceChain = "";
+        int total = die.modifier;
+        for ( int i = 0; i < die.numberOfDice; i++ )
+        {
+            int rollResult = Dice.rollAce(die.numberOfSides);
+            diceChain += " " + rollResult + "";
+            total += rollResult;
+        }
+
+        if ( message.endsWith("raise") )
+        {
+            int raiseResult = Dice.rollAce( 6 );
+            diceChain += " " + raiseResult + "";
+            total += raiseResult;
+            return String.format("rolled a (%s) with a raise for %s and got ( %s ) Total: %s", die.formula, sender, diceChain.trim(), total);
+        }
+        else
+            return String.format("rolled a (%s) for %s and got ( %s ) Total: %s", die.formula, sender, diceChain.trim(), total);
+    }
+
    	public void setGm(String handle)
    	{
-   		String x = "";
-   		for (int i = 0; i < gms.size(); i++)
-		{
-			x = gms.get(i);
-			if( x.equalsIgnoreCase(handle) )
-				return;
-		}
+   		for (String gm : gms)
+			if( gm.equalsIgnoreCase(handle) )
+                return;
 		gms.add(handle);
    	}
     public boolean isGm(String handle)
     {
-  		for (int i = 0; i < gms.size(); i++)
-		{
-			String x = gms.get(i);
-			if( x.equalsIgnoreCase(handle) )
-				return true;
-		}
+  		for (String gm : gms)
+			if( gm.equalsIgnoreCase(handle) )
+                return true;
 		return false;
     }
     public void setJoin(String joinMessage){
@@ -1276,93 +747,73 @@ public class FBot extends PircBot
     {
     	String out = "The current GMs are: ";
     	for (int i = 0; i < gms.size(); i++)
-		{
 			out = out + " " + gms.get(i);
-		}
 		return out;
     }
    	public static String wildRoller( String message, String sender)
    	//savage worlds wildcard roller, adds the d6 wildcard die on automatically
    	//the lowest die is dropped
    	{
+        String usageMessage = "Useage:  [x]dy+z  All die are rolled seperately with a wild die wild replaces lowest if lower.";
    		String diceChain = "";
-   		int amount = 1;
-   		int i;
-   		int die;
-   		int[] rolls;
-   		boolean isDice = true;
-   		int mod = 0;
+
    		String[] args = message.split(" ");
    		String results = "rolled a ";
-   		String text = "1";
-   		int modMult = 1;
-   		int lowest = 2147483640;
    		//someone's gotta be very lucky to beat that number with all their rolls
    		int lowestPos = 0;
 
-   		if ( args.length == 1 )
-   		{
-   			return "Useage:  [x]dy+z  All die are rolled seperately with a wild die wild replaces lowest if lower.";
-   		}
+        // Asserts
+   		if ( args.length == 1 || !args[1].contains( "d" ) )
+   			return usageMessage;
+
    		if ( args[1].startsWith("d") )
-   		{
-   			args[1] = text.concat( args[1] );
-   		}
-   		else if ( args[1].indexOf( "d" ) < 0 )
-   		{
-   			return "Useage:  [x]dy+z  All die are rolled seperately with a wild die wild replaces lowest if lower.";
-   		}
+   			args[1] = "1".concat( args[1] );
+        if ( !args[1].contains( "-" ) && !args[1].contains( "+" ) )
+            args[1] = args[1].concat( "+0" );
+
+        String splitPattern = "\\+";
+        int modMultiplier = 1;
+        if ( !args[1].contains( "+" ) && args[1].contains( "-" ) )
+        {
+            splitPattern = "-";
+            modMultiplier = -1;
+        }
+
    		results = results.concat( "(" + args[1] + ") with wild die for " + sender + " and got (" );
-   		args[1] = args[1].replace( "+", "�" );
-   		if ( args[1].indexOf( "-" ) < 0 && args[1].indexOf( "�" ) < 0 )
-   			args[1] = args[1].concat( "�0" );
-   		args = args[1].split("d");
-   		try
+
+        String[] dieBisect = args[1].split("d");
+        String[] modifierBisect = dieBisect[1].split(splitPattern);
+        int numberOfDice;
+        int numberOfSides;
+        int mod;
+        try
    		{
-   			amount = Integer.parseInt( args[0] );
+   			numberOfDice = Integer.parseInt( dieBisect[0] );
+            numberOfSides = Integer.parseInt( modifierBisect[0] );
+            mod = Integer.parseInt( modifierBisect[1] )*modMultiplier;
    		}
    		catch(Exception e)
    		{
-  			return "Useage:  [x]dy+z  All die are rolled seperately with a wild die wild replaces lowest if lower.";
+  			return usageMessage;
    		}
-   		if ( args[1].indexOf( "�" ) > -1 )
-   			args = args[1].split("�");
-   		else if ( args[1].indexOf( "-" ) > -1 )
+
+        int[] rolls = new int[numberOfDice+1];
+   		for (int i = 0; i < numberOfDice; i++ )
    		{
-   			args = args[1].split("-");
-   			modMult = -1;
+   			rolls[i] = Dice.rollAce( numberOfSides, mod );
    		}
-   		try
+   		rolls[numberOfDice] = Dice.rollAce( 6, mod );
+
+        int lowest = Integer.MAX_VALUE;
+        for (int i = 0; i < rolls.length; i++ )
    		{
-   			die = Integer.parseInt( args[0] );
-   		}
-   		catch(Exception e)
-   		{
-  			return "Useage:  [x]dy+z  All die are rolled seperately with a wild die wild replaces lowest if lower.";
-   		}
-   		try
-   		{
-   			mod = Integer.parseInt( args[1] )*modMult;
-   		}
-   		catch(Exception e)
-   		{
-  			return "Useage:  [x]dy+z  All die are rolled seperately with a wild die wild replaces lowest if lower.";
-   		}
-   		rolls = new int[amount+1];
-   		for ( i = 0; i < amount; i++ )
-   		{
-   			rolls[i] = Dice.rollAce( die, mod );
-   		}
-   		rolls[amount] = Dice.rollAce( 6, mod );
-   		for ( i = 0; i < rolls.length; i++ )
-   		{
-   			if ( i == amount )
-   				diceChain = diceChain.concat( "9" );
-   			else if ( rolls[i] == 1+mod )
+   			if ( i == numberOfDice ) // Color the fate die
+   				diceChain = diceChain.concat( Colors.GREEN );
+   			else if ( rolls[i] == 1+mod ) // Color a snake eye
    			{
-   				diceChain = diceChain.concat( "4" );
+   				diceChain = diceChain.concat( Colors.RED );
    			}
-   			diceChain = diceChain.concat( " " + rolls[i] + "" );
+   			diceChain = diceChain.concat( " " + rolls[i] + Colors.NORMAL );
    			if ( rolls[i] < lowest )
    			{
    				lowest = rolls[i];
@@ -1370,14 +821,14 @@ public class FBot extends PircBot
    			}
    		}
    		results = results.concat( diceChain + " ) Results:" );
-   		for ( i = 0; i < rolls.length; i++ )
+   		for (int i = 0; i < rolls.length; i++ )
    		{
    			if ( i != lowestPos )
    				results = results.concat( " " + rolls[i] );
    		}
-   		if ( rolls[amount] == mod+1 && lowest == mod+1 && lowestPos != amount )
+   		if ( rolls[numberOfDice] == mod+1 && lowest == mod+1 && lowestPos != numberOfDice )
    		{
-   			results = results.concat( " 4BUST!" );
+   			results = results.concat( " " + Colors.BOLD + Colors.RED + "BUST!" + Colors.NORMAL );
    		}
    		return results;
    	}
