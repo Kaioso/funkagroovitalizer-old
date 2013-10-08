@@ -758,9 +758,6 @@ public class FBot extends PircBot
    		String diceChain = "";
 
    		String[] args = message.split(" ");
-   		String results = "rolled a ";
-   		//someone's gotta be very lucky to beat that number with all their rolls
-   		int lowestPos = 0;
 
         // Asserts
    		if ( args.length == 1 || !args[1].contains( "d" ) )
@@ -779,9 +776,7 @@ public class FBot extends PircBot
             modMultiplier = -1;
         }
 
-   		results = results.concat( "(" + args[1] + ") with wild die for " + sender + " and got (" );
-
-        String[] dieBisect = args[1].split("d");
+   		String[] dieBisect = args[1].split("d");
         String[] modifierBisect = dieBisect[1].split(splitPattern);
         int numberOfDice;
         int numberOfSides;
@@ -804,6 +799,7 @@ public class FBot extends PircBot
    		}
    		rolls[numberOfDice] = Dice.rollAce( 6, mod );
 
+        int lowestPos = 0;
         int lowest = Integer.MAX_VALUE;
         for (int i = 0; i < rolls.length; i++ )
    		{
@@ -820,6 +816,9 @@ public class FBot extends PircBot
    				lowestPos = i;
    			}
    		}
+
+        String results = "rolled a ";
+        results = results.concat( "(" + args[1] + ") with wild die for " + sender + " and got (" );
    		results = results.concat( diceChain + " ) Results:" );
    		for (int i = 0; i < rolls.length; i++ )
    		{
@@ -832,92 +831,77 @@ public class FBot extends PircBot
    		}
    		return results;
    	}
+
 	public static String shadowRoller( String message, String sender )
 	//shadowrun dice roller
 	{
-		String diceChain = "";
-		double fate;
-		int hits = 0;
-		int die;
-		int rolls = 0;
-		int ones = 0;
-		boolean isDice = true;
-		boolean edge = false;
-		int pool;
-		String results = "";
 		String[] args = message.split(" ");
-		if ( args.length == 1 )
-		{
-			return "Useage: !sr X [edge] Where x is the number of die in pool, and edge applies the rule of sixes.";
-		}
-		else
-		{
-			isDice = true;
-			try
-   			{
-   				pool = Integer.parseInt ( args[1] );
-   			}
-   			catch(Exception e)
-   			{
-  				return "Useage: !sr X [edge] Where x is the number of die in pool, and edge applies the rule of sixes.";
-   			}
-   			results = results.concat( "rolled " + pool + " dice " );
-   			if ( args.length >= 3 )
-   			{
-   				if ( args[2].equalsIgnoreCase( "edge" ) )
-   				{
-   					edge = true;
-  					results = results.concat( "with edge ");
-   				}
-   			}
-   			results = results.concat( "for " + sender + " and got (" );
-   			while( pool > 0 )
-   			{
-   				die = Dice.rollDice( 6 );
-   				if ( die == 6 && edge )
-   				{
-   					diceChain = diceChain.concat( "12" );
-   					pool++;
-   				} else if ( die == 1 )
-   				{
-  					diceChain = diceChain.concat( "4" );
-   					ones++;
-  				}
-   			    diceChain = diceChain.concat( " " + die + "");
-   			    rolls++;
-   			    if ( die > 4 )
-   			    {
-   			    	hits++;
-   			    }
-   			    pool--;
-   			}
-   			results = results.concat( diceChain + " )  Hits: " + hits );
-   			if ( ones == 0 )
-   			{
-   				fate = 3;
-   			}
-   			else
-   			{
-   				fate = rolls/ones;
-   			}
-   			if ( fate < 2 && hits == 0 )
-   			{
-   				results = results.concat( " Critical Glitch!" );
-   			}
-   			else if ( fate < 2 )
-   			{
-   				results = results.concat( " Glitch!" );
-   			}
-   			if (isDice)
-   			{
-   				return results;
-   			}
-   			else
-  			{
-   				return "Useage: !sr X [edge] Where x is the number of die in pool, and edge applies the rule of sixes.";
-   			}
-		}
+        String usageMessage = "Useage: !sr X [edge] Where x is the number of die in pool, and edge applies the rule of sixes.";
+
+		if ( args.length <= 1 )
+			return usageMessage;
+
+        // Get dice arguments
+        int pool;
+        boolean withEdge;
+        try
+        {
+            pool = Integer.parseInt ( args[1] );
+            // Eliminated a deep nesting with inline boolean logic
+            // Short circuit will prevent exception
+            withEdge = args.length >= 3 && args[2].equalsIgnoreCase( "edge" );
+        }
+        catch(Exception e)
+        {
+            return usageMessage;
+        }
+
+        String diceChain = "";
+        int hits = 0;
+        int die;
+        int rolls = 0;
+        int glitches = 0;
+        // This is the rolling
+        while( pool > 0 )
+        {
+            die = Dice.rollDice( 6 );
+            int MAX_ROLL = 6;
+            int GLITCH_ROLL = 1;
+            int HIT_THRESHOLD = 4;
+            if ( die == MAX_ROLL && withEdge )
+            {
+                // Color die blue
+                diceChain = diceChain.concat(Colors.BLUE);
+                pool++;
+            }
+            else if ( die == GLITCH_ROLL )
+            {
+                // Color die red
+                diceChain = diceChain.concat(Colors.RED);
+                glitches++;
+            }
+            // Place die in chain and then reset text color
+            diceChain = diceChain.concat( " " + die + Colors.NORMAL);
+            rolls++;
+            if ( die > HIT_THRESHOLD )
+                hits++;
+            pool--;
+        }
+        String results = "rolled " + pool + " dice ";
+        if (withEdge)
+            results = results.concat( "with edge ");
+        results = results.concat( "for " + sender + " and got (" );
+        results = results.concat( diceChain + " )  Hits: " + hits );
+        if ( glitches != 0 && rolls / glitches < 2 )
+        {
+            if (hits == 0)
+                results = results.concat( " Critical Glitch!" );
+            else
+                results = results.concat( " Glitch!" );
+        }
+        return results;
 	}
+
 	public static String pointValue(String[] args )
 	//dnd 3e pointbuy values
 	{
