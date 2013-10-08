@@ -151,6 +151,7 @@ public class FBot extends PircBot
 			{ characterGetTotals(channel, sender); }
 		}
     }
+
 	public void onPrivateMessage(String sender, String login, String hostname, String message)
 	//same general deal as the last function
 	//a few things that were gm only for the channel message
@@ -755,7 +756,6 @@ public class FBot extends PircBot
    	//the lowest die is dropped
    	{
         String usageMessage = "Useage:  [x]dy+z  All die are rolled seperately with a wild die wild replaces lowest if lower.";
-   		String diceChain = "";
 
    		String[] args = message.split(" ");
 
@@ -799,6 +799,7 @@ public class FBot extends PircBot
    		}
    		rolls[numberOfDice] = Dice.rollAce( 6, mod );
 
+        String diceChain = "";
         int lowestPos = 0;
         int lowest = Integer.MAX_VALUE;
         for (int i = 0; i < rolls.length; i++ )
@@ -905,81 +906,63 @@ public class FBot extends PircBot
 	public static String pointValue(String[] args )
 	//dnd 3e pointbuy values
 	{
-		int tally=0;
-		int current=0;
-		int counter;
+		String usageMessage = "Useage: !value <a> <b> <c> <d> <e> <f>  ALl values must be numeric and between 8 and 18.";
 		if ( args.length < 2 )
-			return "Useage: !value <a> <b> <c> <d> <e> <f>  ALl values must be numeric and between 8 and 18.";
+			return usageMessage;
+
+        int tally=0;
 		for ( int i = 1; i < args.length; i++)
 		{
 			try
    			{
-   				current = Integer.parseInt ( args[i] );
+   				int current = Integer.parseInt ( args[i] );
+                if ( current < 8 || current > 18 )
+                    throw new Exception("Number not in range.");
+
+                // The point buy works as follows:
+                // Values above 10 are irrelevant, so we subtract 8
+                // Values less than or equal to 6 are at * 1
+                // Values 7 and 8 are at * 2
+                // Values 9 and 10 are at * 3
+                current = current - 8;
+                int onePointValues = Math.min(6, current);
+                current = Math.max(0, current - 6);
+                int twoPointValues = Math.min(2, current);
+                current = Math.max(0, current - 2);
+                int threePointValues = Math.min(2, current);
+
+                tally += (onePointValues) + (twoPointValues * 2) + (threePointValues * 3);
    			}
    			catch(Exception e)
    			{
-  				return "Useage: !value <a> <b> <c> <d> <e> <f>  ALl values must be numeric and between 8 and 18.";
+  				return usageMessage;
    			}
-   			if ( current < 8 || current > 18 )
-   			{
-   				return "Useage: !value <a> <b> <c> <d> <e> <f>  ALl values must be numeric and between 8 and 18.";
-   			}
-   			current = current - 8;
-   			counter = 6;
-   			while ( counter != 0 && current != 0 )
-   			{
-   				tally++;
-   				current--;
-   				counter--;
-   			}
-   			counter = 2;
-   			while ( counter != 0 && current != 0 )
-   			{
 
-   				tally+=2;
-   				current--;
-   				counter--;
-   			}
-   			counter = 2;
-   			while ( counter != 0 && current != 0 )
-   			{
-
-   				tally+=3;
-   				current--;
-   				counter--;
-   			}
 		}
 		return "Point buy value of the indicated attributes is: " + tally;
 	}
+
 	public static String[] genChar(String type)
 	//dnd character roller
 	{
-		int amount = 4;
-		int[] rolls = new int[5];
-		String[] result = new String[7];
-		result[0] = "Rolling d20 stats for a ";
+        // 0-2: low, mid, high
+        // Default mid
+        int powerTier = 1;
+        if (type.equalsIgnoreCase("highpower"))
+            powerTier = 2;
+        else if (type.equalsIgnoreCase("lowpower"))
+            powerTier = 0;
 
-		if ( type.equalsIgnoreCase("highpower") )
-		{
-			amount = 5;
-			result[0] = result[0] + " high-powered character.";
-		}
-		else if ( type.equalsIgnoreCase("lowpower") )
-		{
-			amount = 3;
-			result[0] = result[0] + " low-powered character.";
-			rolls[4] = 0;
-			rolls[3] = 0;
-		}
-		else
-		{
-			result[0] = result[0] + " mid-powered character.";
-			rolls[4] = 0;
-		}
+        int[] amountOfRollsByTier = {3, 4, 5};
+        String[] captionByTier = {"low", "mid", "high"};
+        int[] rolls = new int[amountOfRollsByTier[powerTier]];
+        String[] result = new String[7];
+        result[0] = String.format("Rolling d20 stats for a %s-powered character", captionByTier[powerTier]);
+
 		for (int i = 1; i < 7; i++)
 		{
 			result[i] = "Rolls: ";
-			for (int j = amount-1; j > -1; j--)
+			for (int j = rolls.length - 1; j > -1; j--)
 			{
 				rolls[j] = Dice.rollDice(6);
 				result[i] = result[i] + rolls[j] + " ";
@@ -988,40 +971,17 @@ public class FBot extends PircBot
 		}
 		return result;
 	}
-	public static int statCrunch(int[] rolls)
-	//called by dnd stat roller
-	{
-		int lowest = 7;
-		int lowestPos = -1;
-		int amount = 0;
-		int total = 0;
-		for ( int i = 0; i < rolls.length; i ++)
-		{
-			if ( rolls[i] > 0 )
-			{
-				amount++;
 
-				if ( rolls[i] < lowest )
-				{
-					lowest = rolls[i];
-					lowestPos = i;
-				}
-			}
-		}
-		if ( amount > 3 )
-		{
-			rolls[lowestPos] = 0;
-			return statCrunch(rolls);
-		}
-		else
-		{
-			for ( int i = 0; i < rolls.length; i ++)
-			{
-				total += rolls[i];
-			}
-			return total;
-		}
+	public static int statCrunch(int[] rolls)
+	{
+        // Sort array, take top 3
+        Arrays.sort(rolls);
+        int total = 0;
+        for (int i = Math.max(0, rolls.length - 3); i < rolls.length; i++)
+            total += rolls[i];
+        return total;
 	}
+
 	public RollSort getTable(String name)
 	{
 		for (int i = 0; i < tables.size(); i++)
