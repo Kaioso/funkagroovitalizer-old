@@ -79,78 +79,80 @@ public class FBot extends PircBot
 
 	    	if (args.length < 1 )
 	    		return;
-	    	//checking for valid dice string at the start
-   	    	//Checking for commands
-   	    	//TODO:  Some of these should become functions....
-            //This is one of those whims  I wanted to see how fair the dice were.
-   	    	if ( args[0].equalsIgnoreCase("!stats") ) { showStats(args, channel); }
-			else if (args[0].equalsIgnoreCase("!join")) { joinChannel(args, channel, sender); }
-   	    	else if ( args[0].equalsIgnoreCase("!roll")) { rollDice(args, dStart, channel, sender); }
-   	    	else if ( args[0].equalsIgnoreCase("!hd") ) { heroDamage(args, channel, sender); }
-   	    	else if ( args[0].equalsIgnoreCase("!ha") ) { heroAttack(args, channel, sender); }
-   	    	else if ( args[0].equalsIgnoreCase("!wg") ) { westDice(args, channel, sender); }
-   	    	else if ( args[0].equalsIgnoreCase("!aarnrace") ){ sendMessage( channel, "Your randomly determined race is: " + aarnRace( false, false, "" ) ); }
-   	    	else if ( args[0].equalsIgnoreCase("!wonder") ) { wonderWand(args, channel); }
-            //pointbuy value calculator
-            //if only all my command checks were this tidy
-   	    	else if ( args[0].equalsIgnoreCase("!value") ) { sendMessage( channel, pointValue(args) ); }
-   	    	else if ( args[0].equalsIgnoreCase("!addgm") ) { addGM(args, channel, sender); }
-   	    	else if ( args[0].equalsIgnoreCase("!npc")) { NPC(args, channel); }
-   	    	else if ( args[0].equalsIgnoreCase("!save")) { save(channel); }
-            //fatepot chip using for deadlands
-            //discards the specified chip and spits
-            //back a report based on if there was a chip
-            //to give
-   	    	else if ( args[0].equalsIgnoreCase("!use") ) { useFateChip(args, channel, sender); }
-   	    	else if ( args[0].equalsIgnoreCase("!start") && isGm(sender) ) { startInit(args, channel); }
-   	    	else if ( args[0].equalsIgnoreCase("!next") && isGm(sender) ) { nextInit(args, channel); }
-            //gm command for putting chips into the pot.
-   		   	else if ( args[0].equalsIgnoreCase("!potput") ) { fatePotPut(args, channel, sender); }
-      		else if ( args[0].equalsIgnoreCase("!potadd") ) { fatePotAdd(args, channel, sender); }
-     	 	else if ( args[0].equalsIgnoreCase("!potreset") ) { fatePotReset(channel, sender); }
-      		else if ( args[0].equalsIgnoreCase("!potdraw") ) { fatePotDraw(args, channel, sender); }
-     	 	else if ( args[0].equalsIgnoreCase("!potstatus") ) { sendMessage( channel, pot.chipCount() ); }
-    	  	else if ( args[0].equalsIgnoreCase("!potset") ) { fatePotSetChipAmounts(args, channel); }
-    	  	else if ( args[0].equalsIgnoreCase("!inventory") ) { sendMessage(channel, pot.playerStatus(sender) ); }
-    	   	else if ( args[0].equalsIgnoreCase("!currentgm") || args[0].equalsIgnoreCase("!gmlist") ) { sendMessage(channel, listGm() ); }
-			else if( args[0].equalsIgnoreCase("!sr") ) { shadowrunDice(message, channel, sender); }
-			else if( args[0].equalsIgnoreCase("!exalted") ) { exaltedDice(message, channel, sender); }
-			else if ( args[0].equalsIgnoreCase("!wild") ) { wildDice(message, channel, sender); }
-			else if ( args[0].equalsIgnoreCase("!sw") ) { savageDice(message, channel, sender); }
-			else if ( args[0].equalsIgnoreCase("!swarm") ) { swarmDice(message, channel, sender); }
-			else if ( args[0].equalsIgnoreCase("!notify") ) { notifyPlayer(args, channel, sender); }
-			else if ( args[0].equalsIgnoreCase("!magic8ball")) { sendMessage(channel,  magic8Ball() ); }
-			else if ( args[0].equalsIgnoreCase("!sound") ) { notifyPlayerSound(args, channel, sender); }
-			else if ( args[0].equalsIgnoreCase("!soundfile") ) { setNotifySound(args, channel, sender); }
-			else if ( args[0].equalsIgnoreCase("!rollfor") ) { rollForNpc(args, channel, sender); }
-			else if ( args[0].equalsIgnoreCase("!rollmod") ) { rollMod(args, channel, sender, message, dStart); }
-			else if ( args[0].equalsIgnoreCase("!edit") && isGm(sender) ) { editInit(args, channel, sender); }
-			else if ( args[0].equalsIgnoreCase("!scram") && isGm(sender) ) {scram(channel); }
-			else if ( args[0].equalsIgnoreCase("!fudge") ) { fudgeDice(args, channel, sender); }
-			else if ( args[0].equalsIgnoreCase("!fate") ) { fateDice(args, channel, sender); }
-			else if (  args[0].equalsIgnoreCase("!list") && isGm(sender) ) { listInit(args, channel); }
-			else if ( args[0].equalsIgnoreCase("!hand") ) { cardHand(args, channel, sender); }
-			else if ( args[0].equalsIgnoreCase("!dealup") ) { cardDeal(args, channel, sender); }
-			else if ( args[0].equalsIgnoreCase("!deckadd") ) { cardAddPlayer(args, channel, sender); }
-			else if ( args[0].equalsIgnoreCase("!deckremove") ) { cardRemovePlayer(args, channel, sender); }
-			else if ( args[0].equalsIgnoreCase("!deckreset") ) { cardReset(args, channel, sender); }
-			else if ( args[0].equalsIgnoreCase("!collect" ) ) { cardCollect(args, channel); }
-			else if ( args[0].equalsIgnoreCase("!cardlist" ) ) { cardList(args, channel); }
-			else if ( args[0].equalsIgnoreCase("!decklist" ) ) { deckList(args, channel); }
-			else if ( args[0].equalsIgnoreCase("!shuffle") ) { cardShuffle(args, channel); }
-			else if ( args[0].equalsIgnoreCase("!chargen") ) { characterGeneration(args, channel); }
-			else if ( args[0].equalsIgnoreCase("!makedeck") ) { makeDeck(args, channel); }
-			else if ( args[0].equalsIgnoreCase("!remove") ) { initRemove(args, channel); }
-			else if ( args[0].equalsIgnoreCase("!newchar") ) { characterNew(args, channel, sender); }
-			else if ( args[0].equalsIgnoreCase("!advance") ) { characterAdvance(args, channel, sender); }
-			else if ( args[0].equalsIgnoreCase("!deposit") ) { characterDepositMoney(args, channel, sender); }
-			else if ( args[0].equalsIgnoreCase("!spend") ) { characterSpendMoney(args, channel, sender); }
-			else if ( args[0].equalsIgnoreCase("!deduct") ) { characterDeductMoney(args, channel, sender); }
-			else if ( args[0].equalsIgnoreCase("!ct") ) { ctDice(args, channel, sender); }
-			else if ( args[0].equalsIgnoreCase("!gettotals") || args[0].equalsIgnoreCase("!totals") || args[0].equalsIgnoreCase("!status") )
-			{ characterGetTotals(channel, sender); }
-		}
+
+
+            if ( args[0].startsWith("!") ) {
+                String command = args[0].substring(1);
+
+                switch (command.toLowerCase()) {
+                    case "stats":       showStats(args, channel);
+                    case "join":        joinChannel(args, channel, sender);
+                    case "hd":          heroDamage(args, channel, sender);
+                    case "roll":        rollDice(args, dStart, channel, sender);
+                    case "ha":          heroAttack(args, channel, sender);
+                    case "wg":          westDice(args, channel, sender);
+                    case "aarnrace":    sendMessage(channel, "Your randomly determined race is: " + aarnRace( false, false, "" ) );
+                    case "wonder":      wonderWand(args, channel);
+                    case "value":       sendMessage( channel, pointValue(args) );
+                    case "addgm":       addGM(args, channel, sender);
+                    case "npc":         NPC(args, channel);
+                    case "save":        save(channel);
+                    case "use":         useFateChip(args, channel, sender);
+                    case "start":       if (isGm(sender)) { startInit(args, channel); }
+                    case "next":        if (isGm(sender)) { nextInit(args, channel); }
+                    case "potput":      fatePotPut(args, channel, sender);
+                    case "potadd":      fatePotAdd(args, channel, sender);
+                    case "potreset":    fatePotReset(channel, sender);
+                    case "potdraw":     fatePotDraw(args, channel, sender);
+                    case "potstatus":   sendMessage(channel, pot.chipCount());
+                    case "potset":      fatePotSetChipAmounts(args, channel);
+                    case "inventory":   sendMessage(channel, pot.playerStatus(sender) );
+                    case "currentgm":   sendMessage(channel, listGm() );
+                    case "gmlist":      sendMessage(channel, listGm() );
+                    case "sr":          shadowrunDice(message, channel, sender);
+                    case "exalted":     exaltedDice(message, channel, sender);
+                    case "wild":        wildDice(message, channel, sender);
+                    case "sw":          savageDice(message, channel, sender);
+                    case "swarm":       swarmDice(message, channel, sender);
+                    case "notify":      notifyPlayer(args, channel, sender);
+                    case "magic8ball":  sendMessage(channel, magic8Ball());
+                    case "sound":       notifyPlayerSound(args, channel, sender);
+                    case "soundfile":   setNotifySound(args, channel, sender);
+                    case "rollfor":     rollForNpc(args, channel, sender);
+                    case "rollmod":     rollMod(args, channel, sender, message, dStart);
+                    case "edit":        if (isGm(sender)) { editInit(args, channel, sender); }
+                    case "scram":       if (isGm(sender)) { scram(channel); }
+                    case "fudge":       fudgeDice(args, channel, sender);
+                    case "fate":        fateDice(args, channel, sender);
+                    case "list":        if (isGm(sender)) { listInit(args, channel); }
+                    case "hand":        cardHand(args, channel, sender);
+                    case "dealup":      cardDeal(args, channel, sender);
+                    case "deckadd":     cardAddPlayer(args, channel, sender);
+                    case "deckremove":  cardRemovePlayer(args, channel, sender);
+                    case "deckreset":   cardReset(args, channel, sender);
+                    case "collect":     cardCollect(args, channel);
+                    case "cardlist":    cardList(args, channel);
+                    case "decklist":    deckList(args, channel);
+                    case "shuffle":     cardShuffle(args, channel);
+                    case "chargen":     characterGeneration(args, channel);
+                    case "makedeck":    makeDeck(args, channel);
+                    case "remove":      initRemove(args, channel);
+                    case "newchar":     characterNew(args, channel, sender);
+                    case "advance":     characterAdvance(args, channel, sender);
+                    case "deposit":     characterDepositMoney(args, channel, sender);
+                    case "spend":       characterSpendMoney(args, channel, sender);
+                    case "deduct":      characterDeductMoney(args, channel, sender);
+                    case "ct":          ctDice(args, channel, sender);
+                    case "gettotals":   characterGetTotals(channel, sender);
+                    case "totals":      characterGetTotals(channel, sender);
+                    case "status":      characterGetTotals(channel, sender);
+
+                }
+            }
+        }
     }
+
+
 	public void onPrivateMessage(String sender, String login, String hostname, String message)
 	//same general deal as the last function
 	//a few things that were gm only for the channel message
@@ -603,7 +605,7 @@ public class FBot extends PircBot
         }
    	}
 
-    private static class DiceInfo {
+   private static class DiceInfo {
         public int numberOfDice;
         public int numberOfSides;
         public int modifier;
@@ -3415,6 +3417,7 @@ public class FBot extends PircBot
                 return;
             }
         }
+
     }
 
     public void ctDice(String[] args, String channel, String sender)
