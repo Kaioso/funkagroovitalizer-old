@@ -984,26 +984,24 @@ public class FBot extends PircBot
 
 	public RollSort getTable(String name)
 	{
-		for (int i = 0; i < tables.size(); i++)
-		{
-			RollSort x = tables.get(i);
-			if ( name.equals(x.getName()) )
-				return x;
-		}
+		for (RollSort rollsort : tables)
+			if ( name.equals(rollsort.getName()) )
+				return rollsort;
 		return new RollSort("null");
 	}
+
 	public boolean hasTable(String name)
 	{
-		for (int i = 0; i < tables.size(); i++)
-		{
-			RollSort x = tables.get(i);
-			if ( name.equals(x.getName()) )
+		for (RollSort rollsort : tables)
+			if ( name.equals(rollsort.getName()) )
 				return true;
-		}
 		return false;
 	}
+
 	public void addTable(RollSort value)
 	{
+        // Keeping index based iteration because List.remove(int) is more reliable than the hash-based
+        // when you're working with mutable objects
 		for (int i = 0; i < tables.size(); i++)
 		{
 			String name = value.getName();
@@ -1013,8 +1011,14 @@ public class FBot extends PircBot
 		}
 		tables.add(value);
 	}
+
 	public void addProfile(String name)
 	{
+        // Keeping index based iteration because List.remove(int) is more reliable than the hash-based
+        // when you're working with mutable objects
+
+        // Really this should be a Set - but I shouldn't make such a refactor while drunk
+        // TODO: Make Profiles a set to keep the invariant placed here.
 		for (int i = 0; i < profiles.size(); i++)
 		{
 			PlayerProfile x = profiles.get(i);
@@ -1023,205 +1027,110 @@ public class FBot extends PircBot
 		}
 		profiles.add(new PlayerProfile(name) );
 	}
+
 	public boolean hasProfile(String name)
 	{
-		for (int i = 0; i < profiles.size(); i++)
-		{
-			PlayerProfile x = profiles.get(i);
-			if ( name.equals(x.getName()) )
+		for (PlayerProfile profile : profiles)
+			if ( name.equals(profile.getName()) )
 				return true;
-		}
 		return false;
 	}
+
 	public void setNotice(String name, boolean note)
 	{
-		for (int i = 0; i < profiles.size(); i++)
-		{
-			PlayerProfile x = profiles.get(i);
-			if ( name.equals(x.getName()) )
-			{
-				x.setNotify(note);
-				profiles.remove(i);
-				profiles.add(x);
-				return;
-			}
-		}
-		return;
+		for (PlayerProfile profile : profiles)
+			if ( name.equals(profile.getName()) )
+				profile.setNotify(note);
 	}
+
 	public void setSonic(String name, boolean note)
 	{
-		for (int i = 0; i < profiles.size(); i++)
-		{
-			PlayerProfile x = profiles.get(i);
-			if ( name.equals(x.getName()) )
-			{
-				x.setSound(note);
-				profiles.remove(i);
-				profiles.add(x);
-				return;
-			}
-		}
-		return;
+		for (PlayerProfile profile : profiles)
+			if ( name.equals(profile.getName()) )
+				profile.setSound(note);
 	}
+
 	public void setSFile(String name, String file)
 	{
-		for (int i = 0; i < profiles.size(); i++)
-		{
-			PlayerProfile x = profiles.get(i);
-			if ( name.equals(x.getName()) )
-			{
-				x.setSoundFile(file);
-				profiles.remove(i);
-				profiles.add(x);
-				return;
-			}
-		}
-		return;
+		for (PlayerProfile profile : profiles)
+			if ( name.equals(profile.getName()) )
+				profile.setSoundFile(file);
 	}
+
 	public static String magic8Ball()
 	{
-		int fortune = Dice.rollDice(20);
-		if (fortune==1)
-		{
-			return "As I see it, yes";
-		}
-		else if (fortune==2)
-		{
-			return "Ask again later";
-		}
-		else if (fortune==3)
-		{
-			return "Better not tell you now";
-		}
-		else if (fortune==4)
-		{
-			return "Cannot predict now";
-		}
-		else if (fortune==5)
-		{
-			return "Concentrate and ask again";
-		}
-		else if (fortune==6)
-		{
-			return "Don't count on it";
-		}
-		else if (fortune==7)
-		{
-			return "You may rely on it";
-		}
-		else if (fortune==8)
-		{
-			return "It is certain";
-		}
-		else if (fortune==9)
-		{
-			return "It is decidedly so ";
-		}
-		else if (fortune==10)
-		{
-			return "Most likely";
-		}
-		else if (fortune==11)
-		{
-			return "My reply is no";
-		}
-		else if (fortune==12)
-		{
-			return "Yes - definitely";
-		}
-		else if (fortune==13)
-		{
-			return "My sources say no";
-		}
-		else if (fortune==14)
-		{
-			return "Outlook good";
-		}
-		else if (fortune==15)
-		{
-			return "Outlook not so good";
-		}
-		else if (fortune==16)
-		{
-			return "Reply hazy, try again";
-		}
-		else if (fortune==17)
-		{
-			return "Signs point to yes";
-		}
-		else if (fortune==18)
-		{
-			return "Very doubtful";
-		}
-		else if (fortune==19)
-		{
-			return "Without a doubt";
-		}
-		else
-		{
-			return "Yes";
-		}
+        // Simply add another element to the array to add more possible answers.
+		String[] fortunes = new String[] {
+                "As I see it, yes",
+                "Ask again later",
+                "Better not tell you now",
+                "Cannot predict now",
+                "Concentrate and ask again",
+                "Don't count on it",
+                "You may rely on it",
+                "It is certain",
+                "It is decidedly so ",
+                "Most likely",
+                "My reply is no",
+                "Yes - definitely",
+                "My sources say no",
+                "Outlook good",
+                "Outlook not so good",
+                "Reply hazy, try again",
+                "Signs point to yes",
+                "Very doubtful",
+                "Without a doubt",
+                "Yes"
+        };
+        return fortunes[Dice.rollDice(fortunes.length) - 1];
 	}
+
 	public boolean notifyMe(String name)
 	{
-		for (int i = 0; i < profiles.size(); i++)
-		{
-			PlayerProfile x = profiles.get(i);
+		for (PlayerProfile x : profiles)
 			if ( name.equals(x.getName()) )
 				return x.isNotify();
-		}
 		return false;
 	}
+
 	public boolean beepMe(String name)
 	{
-		for (int i = 0; i < profiles.size(); i++)
-		{
-			PlayerProfile x = profiles.get(i);
+		for (PlayerProfile x : profiles)
 			if ( name.equals(x.getName()) )
 				return x.isSound();
-		}
 		return false;
 	}
+
 	public String getSFile(String name)
 	{
-		for (int i = 0; i < profiles.size(); i++)
-		{
-			PlayerProfile x = profiles.get(i);
+		for (PlayerProfile x : profiles)
 			if ( name.equals(x.getName()) )
 				return x.getSoundFile();
-		}
 		return "";
 	}
+
+    // saves current gm list to file
 	public boolean saveGMs()
-	// saves current gm list to file
 	{
-		PrintWriter output = null;
-		try
+		try (PrintWriter output = new PrintWriter(new FileOutputStream("gmlist.ini")))
 		{
-			output = new PrintWriter(new FileOutputStream("gmlist.ini"));
+            for ( String gm : gms )
+                output.println( gm );
 		}
 		catch(FileNotFoundException e)
 		{
 			return false;
 		}
-		for ( int i = 0; i < gms.size(); i++ )
-		{
-			output.println( gms.get(i) );
-		}
-		output.close();
 		return true;
 	}
+
 	public boolean loadGMs()
 	{
-		try
+		try (BufferedReader input = new BufferedReader( new FileReader( "gmlist.ini")))
 		{
-			BufferedReader input = new BufferedReader( new FileReader( "gmlist.ini"));
-			String line = input.readLine();
-			while ( line != null)
-			{
+			String line;
+			while ( (line = input.readLine()) != null)
 				setGm(line);
-				line = input.readLine();
-			}
 			return true;
 		}
 		catch (Exception e)
@@ -1229,56 +1138,45 @@ public class FBot extends PircBot
 			return false;
 		}
 	}
-	public boolean saveProfiles()
-	// saves current profile list to file
+
+    // saves current profile list to file
+    public boolean saveProfiles()
 	{
-		PrintWriter output = null;
-		try
+		try (PrintWriter output = new PrintWriter(new FileOutputStream("profiles.ini"));)
 		{
-			output = new PrintWriter(new FileOutputStream("profiles.ini"));
+            for ( PlayerProfile profile : profiles )
+                output.println( profile.toString() );
 		}
 		catch(FileNotFoundException e)
 		{
 			return false;
 		}
-		for ( int i = 0; i < profiles.size(); i++ )
-		{
-			output.println( profiles.get(i).toString() );
-		}
-		output.close();
 		return true;
 	}
+
 	public static PlayerProfile stringToProfile(String input)
 	{
-		String soundFile = "";
 		String[] args = input.split(" ");
-		PlayerProfile x = new PlayerProfile(args[0]);
-		if (args.length > 1 )
-		{
-			if (args[1].equalsIgnoreCase("1"))
-				x.setNotify(true);
-		}
-		if (args.length > 2 )
-		{
-			if (args[1].equalsIgnoreCase("1"))
-				x.setSound(true);
-		}
+		PlayerProfile profile = new PlayerProfile(args[0]);
+		if (args.length > 1 && args[1].equalsIgnoreCase("1") )
+			profile.setNotify(true);
+
+		if (args.length > 2 && args[1].equalsIgnoreCase("1"))
+            profile.setSound(true);
+
 		if (args.length > 3 )
-			x.setSoundFile(args[3]);
-		return x;
+			profile.setSoundFile(args[3]);
+
+		return profile;
 	}
+
 	public boolean loadProfiles()
 	{
-		try
+		try (BufferedReader input = new BufferedReader( new FileReader( "profiles.ini")))
 		{
-			BufferedReader input = new BufferedReader( new FileReader( "profiles.ini"));
-			String line = input.readLine();
-			while ( line != null)
-			{
-				PlayerProfile x = stringToProfile(line);
-				profiles.add(x);
-				line = input.readLine();
-			}
+			String line;
+			while ( (line = input.readLine()) != null)
+				profiles.add(stringToProfile(line));
 			return true;
 		}
 		catch (Exception e)
@@ -1286,36 +1184,29 @@ public class FBot extends PircBot
 			return false;
 		}
 	}
+
 	public boolean saveTotals()
 	{
-		PrintWriter output = null;
-		try
+
+		try (PrintWriter output = new PrintWriter(new FileOutputStream("totals.ini"));)
 		{
-			output = new PrintWriter(new FileOutputStream("totals.ini"));
+            for ( ExpTot total : totals )
+                output.println( total.toRaw() );
 		}
 		catch(FileNotFoundException e)
 		{
 			return false;
 		}
-		for ( int i = 0; i < totals.size(); i++ )
-		{
-			output.println( totals.get(i).toRaw() );
-		}
-		output.close();
 		return true;
 	}
+
 	public boolean loadTotals()
 	{
-		try
+		try (BufferedReader input = new BufferedReader( new FileReader( "totals.ini")))
 		{
-			BufferedReader input = new BufferedReader( new FileReader( "totals.ini"));
-			String line = input.readLine();
-			while ( line != null)
-			{
-				ExpTot x = ExpTot.parseRaw(line);
-				totals.add(x);
-				line = input.readLine();
-			}
+			String line;
+			while ( (line = input.readLine()) != null)
+				totals.add(ExpTot.parseRaw(line));
 			return true;
 		}
 		catch (Exception e)
@@ -1323,39 +1214,39 @@ public class FBot extends PircBot
 			return false;
 		}
 	}
+
 	public boolean hasTotal(String name)
 	{
-		for (int i = 0; i < totals.size(); i++)
-		{
-			ExpTot x = totals.get(i);
-			if ( name.equals(x.getName()) )
+		for (ExpTot totals : this.totals)
+			if ( name.equals(totals.getName()) )
 				return true;
-		}
 		return false;
 	}
+
 	public ExpTot getTotal(String name)
 	{
-		for (int i = 0; i < totals.size(); i++)
-		{
-			ExpTot x = totals.get(i);
-			if ( name.equals(x.getName()) )
-				return x;
-		}
+		for (ExpTot totals : this.totals)
+			if ( name.equals(totals.getName()) )
+				return totals;
 		return new ExpTot("null", 0);
 	}
-	public void addTotal(ExpTot t)
+
+	public void addTotal(ExpTot total)
 	{
-		String name = t.getName();
+        // Another invariant based on the name. I'm sensing a theme
+        // TODO: SET based on the name, or combine the ExpTot class into a member of the profile?
+		String name = total.getName();
 		for (int i = 0; i < totals.size(); i++)
 		{
 			ExpTot x = totals.get(i);
 			if ( name.equals(x.getName()) )
 				totals.remove(i);
 		}
-		totals.add( t );
+		totals.add( total );
 	}
+
+    //returns a 0 if an invalid input saves me a lot of try/catch acrobatics
 	public static int getInt(String input)
-	//returns a 0 if an invalid input saves me a lot of try/catch acrobatics
 	{
 		try
 		{
@@ -1366,8 +1257,9 @@ public class FBot extends PircBot
 			return 0;
 		}
 	}
+
+    //returns a 0 if an invalid input saves me a lot of try/catch acrobatics
 	public double getDouble(String input)
-	//returns a 0 if an invalid input saves me a lot of try/catch acrobatics
 	{
 		try
 		{
@@ -1378,25 +1270,24 @@ public class FBot extends PircBot
 			return 0;
 		}
 	}
+
 	public static int[] cTRaw(int skill)
 	{
 		int[] output = new int[skill];
 		for (int i = skill-1; i >= 0; i--)
-		{
 			output[i]=Dice.rollDice(10);
-		}
 		return output;
 	}
+
 	public static int countInt(int[] stuff, int huh)
 	{
 		int count = 0;
 		for ( int i = 0; i < stuff.length; i++ )
-		{
 			if ( stuff[i] == huh )
 				count++;
-		}
 		return count;
 	}
+
 	public static int getSet(int[] stuff)
 	{
 		int output = 0;
@@ -1405,12 +1296,11 @@ public class FBot extends PircBot
 		{
 			something = i*countInt(stuff, i);
 			if (something > output)
-			{
 				output = something;
-			}
 		}
 		return output;
 	}
+
 	public static int getStraight(int[] input)
 	{
 		int output = 0;
@@ -1441,6 +1331,7 @@ public class FBot extends PircBot
 		}
 		return output;
 	}
+
 	public static int getHigh(int[] input)
 	{
 		int output = 0;
@@ -1451,6 +1342,7 @@ public class FBot extends PircBot
 		}
 		return output;
 	}
+
 	public static String cTRoller(int skill, int base, String name)
 	{
 		int ones = 1;
@@ -1480,6 +1372,7 @@ public class FBot extends PircBot
 		output = output + ") Result: " + result;
 		return output;
 	}
+
 	public static boolean isInt(String input)
 	{
 		try
@@ -1492,6 +1385,7 @@ public class FBot extends PircBot
 			return false;
 		}
 	}
+
 	public static boolean containsInt(int[] stuff, int key)
 	{
 		for ( int i = 0; i < stuff.length; i++ )
@@ -1501,6 +1395,7 @@ public class FBot extends PircBot
 		}
 		return false;
 	}
+
 	public static String aarnRace( boolean noUndead, boolean noThera, String suffix )
 	{
 		int roll = Dice.rollDice(100);
@@ -1613,6 +1508,7 @@ public class FBot extends PircBot
 			}
 		}
 	}
+
 	public static String wonder(boolean expanded)
 	{
 		int dice = Dice.rollDice(100);
@@ -1807,6 +1703,7 @@ public class FBot extends PircBot
 				return "Wish (no XP or gold cost).";
 		}
 	}
+
 	public static boolean isSavage( String message )
    	{
    		message = message.toLowerCase();
@@ -1852,6 +1749,7 @@ public class FBot extends PircBot
    		}
    		return true;
    	}
+
    	public static int aceInt(String message)
    	//this rolls dice and returns the putput as a number only.
    	//bad input results in a 0
