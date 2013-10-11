@@ -1899,7 +1899,7 @@ public class FBot extends PircBot
    	{
    		int i=0;
    		if ( input.startsWith("-") && isRoll(input.substring(1)) )
-   			i = -1*rollerInt( input.substring(1) );
+   			i = -1*parseFour( input.substring(1) );
    		else if ( isRoll(input) )
    			i = rollerInt(input);
    		else if ( isSavage(input) )
