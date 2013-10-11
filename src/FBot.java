@@ -416,20 +416,18 @@ public class FBot extends PircBot
    	{
    		message = message.trim();
    		String diceChain = "";
-   		int amount = 1;
+   		int amount;
    		int i;
    		int die;
    		int[] rolls;
-   		boolean isDice = true;
-   		int mod = 0;
+        int mod = 0;
    		String[] args = message.split(" ");
    		String results = "rolled";
    		String text = "1";
    		int modMult = 1;
    		int total = 0;
-   		int size = 0;
-   		int passes;
-   		int dLoc = 1;
+        int passes;
+   		int dLoc;
 
    		if ( args.length == 1 )
    		{
@@ -1800,18 +1798,18 @@ public class FBot extends PircBot
     	//we find parenthesis and replace them with NUMBERS!
 		for ( int i = 0; i < dice.length(); i++ )
 		{
-			char whee = dice.charAt(i);
-			if ( whee == '(' )
+			char current = dice.charAt(i);
+			if ( current == '(' )
 			{
 				int pos = i;
 				for ( int j = dice.length()-1; j > pos; j-- )
 				{
-					char whoa = dice.charAt(j);
-					if ( whoa == ')')
+					char currParenInternal = dice.charAt(j);
+					if ( currParenInternal == ')')
 					{
-						String subbie = dice.substring(i+1, j);
-						System.out.println( dice.substring( 0, i ) + parseOne(subbie) + dice.substring( j+1 ) );
-						dice = dice.substring( 0, i ) + parseOne(subbie) + dice.substring( j+1 );
+						String equationInParanthesis = dice.substring(i+1, j);
+						System.out.println( dice.substring( 0, i ) + parseOne(equationInParanthesis) + dice.substring( j+1 ) );
+						dice = dice.substring( 0, i ) + parseOne(equationInParanthesis) + dice.substring( j+1 );
 						j = pos;
 					}
 				}
@@ -1821,11 +1819,11 @@ public class FBot extends PircBot
     	//mathematically but it lets us split by +
     	for ( int i = 0; i < dice.length(); i++ )
 		{
-			char moo = dice.charAt(i);
-			if ( moo == '-' && i != 0 )
+			char current = dice.charAt(i);
+			if ( current == '-' && i != 0 )
 			{
-				String thing = dice.charAt(i-1) + "";
-				if ( isInt(thing) )
+				String possibleNumber = dice.charAt(i-1)+"";
+				if ( isInt(possibleNumber) )
 				{
 					dice = dice.substring(0,i) + "+" + dice.substring(i);
 				}
@@ -1876,7 +1874,7 @@ public class FBot extends PircBot
    	{
    		int i=0;
    		if ( input.startsWith("-") && isRoll(input.substring(1)) )
-   			i = -1*rollerInt( input.substring(1) );
+   			i = -1*parseFour( input.substring(1) );
    		else if ( isRoll(input) )
    			i = rollerInt(input);
    		else if ( isSavage(input) )
