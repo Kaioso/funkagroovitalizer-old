@@ -1715,114 +1715,86 @@ public class FBot extends PircBot
    				return false;
    			else
    			{
-   				try
-   				{
-   					int i = Integer.parseInt( stuff[0] );
-   				}
-   				catch (Exception e)
-   				{
-   					return false;
-   				}
+                for (char ch : stuff[0].toCharArray())
+                    if(!Character.isDigit(ch))
+                        return false;
    				message = "d" + stuff[1];
    			}
    		}
-   		message = message.replace( "+", "�" );
-   		if ( message.indexOf( "-" ) < 0 && message.indexOf( "�" ) < 0 )
-   			message = message.concat( "�0" );
-   		if ( message.indexOf( "�" ) > -1 )
-   			dice = message.split("�");
-   		else if ( message.indexOf( "-" ) > -1 )
-   		{
+   		if ( !message.contains( "-" ) && !message.contains( "+" ) )
+   			message = message.concat( "+0" );
+
+   		if ( message.contains( "+" ) )
+   			dice = message.split("\\+");
+   		else if ( message.contains( "-" ) )
    			dice = message.split("-");
-   		}
+
    		if ( dice[0].length() < 2 )
    			return false;
+
    		dice[0] = dice[0].substring(1);
-   		try
-   		{
-   			int i = Integer.parseInt( dice[0] );
-   			i = Integer.parseInt( dice[1] );
-   		}
-   		catch (Exception e)
-   		{
-   			return false;
-   		}
+        for (char ch : dice[0].toCharArray())
+            if(!Character.isDigit(ch))
+                return false;
+        for (char ch : dice[1].toCharArray())
+            if(!Character.isDigit(ch))
+                return false;
+
    		return true;
    	}
 
+    //this rolls dice and returns the putput as a number only.
+    //bad input results in a 0
+    //do NOT use without checking with isRoll()
+    //does NOT handle passes xdy+z format only
    	public static int aceInt(String message)
-   	//this rolls dice and returns the putput as a number only.
-   	//bad input results in a 0
-   	//do NOT use without checking with isRoll()
-   	//does NOT handle passes xdy+z format only
    	{
-   		message = message.trim();
-   		int amount = 1;
-   		int die;
-   		int mod = 0;
-   		String text = "1";
-   		int modMult = 1;
-   		int total = 0;
-   		int size = 0;
-   		message = message.toLowerCase();
+   		message = message.trim().toLowerCase();
 
    		if ( !isSavage(message) )
 			return 0;
+
    		if ( !message.startsWith("e") )
+            message = "1".concat(message);
+        if ( !message.contains( "-" ) && !message.contains( "+" ) )
+            message = message.concat( "+0" );
+
+        String[] dieBisect = message.split("e");
+        String amountAsText = dieBisect[0];
+
+        int modMult = 1;
+        String splitPattern = "\\+";
+   		if ( message.contains("-") )
+        {
+            splitPattern = "-";
+            modMult = -1;
+        }
+
+        int numberOfRolls;
+        int die;
+        int mod;
+        String[] modBisect = dieBisect[1].split(splitPattern);
+        try
+        {
+            numberOfRolls = Integer.parseInt( amountAsText );
+            die = Integer.parseInt( modBisect[0] );
+            mod = Integer.parseInt( modBisect[1] );
+        }
+        catch(Exception e)
+        {
+            return 0;
+        }
+
+   		int total = 0;
+   		while ( numberOfRolls > 0 )
    		{
-   			String[] stuff = message.split("e");
-	    	try
-	   		{
-	   			amount = Integer.parseInt( stuff[0] );
-	   			message = stuff[1];
-	   		}
-	   		catch(Exception e)
-	   		{
-	  			return 0;
-	   		}
+   			total += Dice.rollAce( die, mod * modMult );
+   			numberOfRolls--;
    		}
-   		else
-   		{
-   			message = message.substring(1);
-   		}
-   		message = message.replace( "+", "�" );
-   		if ( message.indexOf( "-" ) < 0 && message.indexOf( "�" ) < 0 )
-   			message = message.concat( "�0" );
-   		if ( message.indexOf("-") < 0 )
-   		{
-   			String[] stuff = message.split("�");
-   			try
-   			{
-   				die = Integer.parseInt( stuff[0] );
-   				mod = Integer.parseInt( stuff[1] );
-   			}
-   			catch(Exception e)
-   			{
-   				return 0;
-   			}
-   		}
-   		else
-   		{
-   			modMult = -1;
-   			String[] stuff = message.split("-");
-   			try
-   			{
-   				die = Integer.parseInt( stuff[0] );
-   				mod = Integer.parseInt( stuff[1] );
-   			}
-   			catch(Exception e)
-   			{
-   				return 0;
-   			}
-   		}
-   		int bunk = 0;
-   		while ( amount > 0 )
-   		{
-   			bunk+=Dice.rollAce( die, mod*modMult );
-   			amount--;
-   		}
-   		return bunk;
+
+   		return total;
    	}
+
     public static int parseOne(String dice)
     {
     	//we find parenthesis and replace them with NUMBERS!
@@ -1867,6 +1839,7 @@ public class FBot extends PircBot
 		}
 		return total;
     }
+
    	public static int parseTwo(String input)
    	{
    		String[] rubbish = input.split("/");
@@ -1882,6 +1855,7 @@ public class FBot extends PircBot
 	   		return total;
    		}
    	}
+
    	public static int parseThree(String input)
    	{
    		String[] moogle = input.split("\\*");
@@ -1897,6 +1871,7 @@ public class FBot extends PircBot
 	   		return total;
    		}
    	}
+
    	public static int parseFour(String input)
    	{
    		int i=0;
@@ -1910,6 +1885,7 @@ public class FBot extends PircBot
    			i = getInt(input);
    		return i;
    	}
+
 	public static boolean isEquation(String input)
    	{
    		//returns true if the string is a valid dice equation for the new roller
@@ -1948,37 +1924,18 @@ public class FBot extends PircBot
 
     public void showStats(String[] args, String channel)
     {
-        int first=1;
-        int second=1;
-        boolean idiot = false;
-        if ( args.length < 3 )
+        try
+        {
+            if ( args.length < 3 )
+                throw new Exception("Wrong number of arguments.");
+
+            int first = Integer.parseInt( args[1] );
+            int second = Integer.parseInt( args[2] );
+            sendMessage( channel, Dice.statRun(first, second) );
+        }
+        catch (Exception e)
         {
             sendMessage( channel, "Useage:  !stats <size of dice> <number of rolls>" );
-        }
-        else
-        {
-            try
-            {
-                first = Integer.parseInt( args[1] );
-                second = Integer.parseInt( args[2] );
-            }
-            catch (Exception e)
-            {
-                idiot = true;
-                //bitter? us?
-                sendMessage( channel, "Useage:  !stats <size of dice> <number of rolls>" );
-                return;
-            }
-            if (idiot)
-            {
-                sendMessage( channel, "Useage:  !stats <size of dice> <number of rolls>" );
-                return;
-            }
-            else
-            {
-                sendMessage( channel, Dice.statRun(first, second) );
-                return;
-            }
         }
     }
 
