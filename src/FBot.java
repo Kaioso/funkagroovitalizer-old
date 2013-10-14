@@ -13,6 +13,7 @@
 import org.jibble.pircbot.*;
 import java.util.*;
 import java.io.*;
+import com.google.common.base.*;
 
 public class FBot extends PircBot
 {
@@ -1939,20 +1940,44 @@ public class FBot extends PircBot
 
     public void rollDice(String[] args, boolean dStart, String channel, String sender)
     {
+        String usageMessage = "!roll [rolls] [Dice Equation] <Table>  xdy rolls x dice size y.  e denotes an exploding dice (Max value rerolled). xey.";
         String daMessage = "";
         int total = 0;
-        if ( args.length < 2 )
-        {
-            if (!dStart)
-                sendMessage( channel, "!roll [rolls] [Dice Equation] <Table>  xdy rolls x dice size y.  e denotes an exploding dice (Max value rerolled). xey." );
-            return;
-        }
+
+//        Optional<Integer> rollTimes = Optional.absent();
+//        Optional<String> formula = Optional.absent();
+//        Optional<String> tableName = Optional.absent();
+//
+////        if ( args.length < 2 && !dStart )
+////        {
+////            sendMessage( channel, usageMessage );
+////            return;
+////        }
+//
+//        if ( args.length >= 3 )
+//            tableName = Optional.fromNullable(args[3]);
+//
+//        if ( args.length < 2 && isEquation(args[1]) )
+//            formula = Optional.fromNullable(args[1]);
+//        else if ( isInt(args[1]) && isEquation(args[2]) )
+//        {
+//            rollTimes = Optional.fromNullable(Integer.parseInt(args[1]));
+//            formula = Optional.fromNullable(args[2]);
+//        }
+//        else
+//        {
+//            sendMessage( channel, usageMessage );
+//            return;
+//        }
+
+
+        // OLD
         if ( args.length > 2 && isInt(args[1]) )
         {
             if ( !isEquation( args[2] ) )
             {
                 if (!dStart)
-                    sendMessage( channel, "!roll [rolls] [Dice Equation] <table>  xdy rolls x dice size y.  e denotes an exploding dice (Max value rerolled). xey." );
+                    sendMessage( channel, usageMessage );
                 return;
             }
             String tally = "";
@@ -1994,7 +2019,7 @@ public class FBot extends PircBot
         else
         {
             if (!dStart)
-                sendMessage( channel, "!roll [rolls] [Dice Equation] <Table>  xdy rolls x dice size y.  e denotes an exploding dice (Max value rerolled). xey." );
+                sendMessage( channel, usageMessage );
             return;
         }
         daMessage = "rolled " + args[1] + " for " + sender + " and got " + total;
