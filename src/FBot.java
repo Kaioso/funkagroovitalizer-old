@@ -86,67 +86,67 @@ public class FBot extends PircBot
                 String command = args[0].substring(1);
 
                 switch (command.toLowerCase()) {
-                    case "stats":       showStats(args, channel);
-                    case "join":        joinChannel(args, channel, sender);
-                    case "hd":          heroDamage(args, channel, sender);
-                    case "roll":        rollDice(args, dStart, channel, sender);
-                    case "ha":          heroAttack(args, channel, sender);
-                    case "wg":          westDice(args, channel, sender);
-                    case "aarnrace":    sendMessage(channel, "Your randomly determined race is: " + aarnRace( false, false, "" ) );
-                    case "wonder":      wonderWand(args, channel);
-                    case "value":       sendMessage( channel, pointValue(args) );
-                    case "addgm":       addGM(args, channel, sender);
-                    case "npc":         NPC(args, channel);
-                    case "save":        save(channel);
-                    case "use":         useFateChip(args, channel, sender);
-                    case "start":       if (isGm(sender)) { startInit(args, channel); }
-                    case "next":        if (isGm(sender)) { nextInit(args, channel); }
-                    case "potput":      fatePotPut(args, channel, sender);
-                    case "potadd":      fatePotAdd(args, channel, sender);
-                    case "potreset":    fatePotReset(channel, sender);
-                    case "potdraw":     fatePotDraw(args, channel, sender);
-                    case "potstatus":   sendMessage(channel, pot.chipCount());
-                    case "potset":      fatePotSetChipAmounts(args, channel);
-                    case "inventory":   sendMessage(channel, pot.playerStatus(sender) );
-                    case "currentgm":   sendMessage(channel, listGm() );
-                    case "gmlist":      sendMessage(channel, listGm() );
-                    case "sr":          shadowrunDice(message, channel, sender);
-                    case "exalted":     exaltedDice(message, channel, sender);
-                    case "wild":        wildDice(message, channel, sender);
-                    case "sw":          savageDice(message, channel, sender);
-                    case "swarm":       swarmDice(message, channel, sender);
-                    case "notify":      notifyPlayer(args, channel, sender);
-                    case "magic8ball":  sendMessage(channel, magic8Ball());
-                    case "sound":       notifyPlayerSound(args, channel, sender);
-                    case "soundfile":   setNotifySound(args, channel, sender);
-                    case "rollfor":     rollForNpc(args, channel, sender);
-                    case "rollmod":     rollMod(args, channel, sender, message, dStart);
-                    case "edit":        if (isGm(sender)) { editInit(args, channel, sender); }
-                    case "scram":       if (isGm(sender)) { scram(channel); }
-                    case "fudge":       fudgeDice(args, channel, sender);
-                    case "fate":        fateDice(args, channel, sender);
-                    case "list":        if (isGm(sender)) { listInit(args, channel); }
-                    case "hand":        cardHand(args, channel, sender);
-                    case "dealup":      cardDeal(args, channel, sender);
-                    case "deckadd":     cardAddPlayer(args, channel, sender);
-                    case "deckremove":  cardRemovePlayer(args, channel, sender);
-                    case "deckreset":   cardReset(args, channel, sender);
-                    case "collect":     cardCollect(args, channel);
-                    case "cardlist":    cardList(args, channel);
-                    case "decklist":    deckList(args, channel);
-                    case "shuffle":     cardShuffle(args, channel);
-                    case "chargen":     characterGeneration(args, channel);
-                    case "makedeck":    makeDeck(args, channel);
-                    case "remove":      initRemove(args, channel);
-                    case "newchar":     characterNew(args, channel, sender);
-                    case "advance":     characterAdvance(args, channel, sender);
-                    case "deposit":     characterDepositMoney(args, channel, sender);
-                    case "spend":       characterSpendMoney(args, channel, sender);
-                    case "deduct":      characterDeductMoney(args, channel, sender);
-                    case "ct":          ctDice(args, channel, sender);
-                    case "gettotals":   characterGetTotals(channel, sender);
-                    case "totals":      characterGetTotals(channel, sender);
-                    case "status":      characterGetTotals(channel, sender);
+                    case "stats":       showStats(args, channel); break;
+                    case "join":        joinChannel(args, channel, sender); break;
+                    case "hd":          heroDamage(args, channel, sender); break;
+                    case "roll":        rollDice(args, dStart, channel, sender); break;
+                    case "ha":          heroAttack(args, channel, sender); break;
+                    case "wg":          westDice(args, channel, sender); break;
+                    case "aarnrace":    sendMessage(channel, "Your randomly determined race is: " + aarnRace( false, false, "" ) ); break;
+                    case "wonder":      wonderWand(args, channel); break;
+                    case "value":       sendMessage( channel, pointValue(args) ); break;
+                    case "addgm":       addGM(args, channel, sender); break;
+                    case "npc":         NPC(args, channel); break;
+                    case "save":        save(channel); break;
+                    case "use":         useFateChip(args, channel, sender); break;
+                    case "start":       if (isGm(sender)) { startInit(args, channel); break; }
+                    case "next":        if (isGm(sender)) { nextInit(args, channel); break; }
+                    case "potput":      fatePotPut(args, channel, sender); break;
+                    case "potadd":      fatePotAdd(args, channel, sender); break;
+                    case "potreset":    fatePotReset(channel, sender); break;
+                    case "potdraw":     fatePotDraw(args, channel, sender); break;
+                    case "potstatus":   sendMessage(channel, pot.chipCount()); break;
+                    case "potset":      fatePotSetChipAmounts(args, channel); break;
+                    case "inventory":   sendMessage(channel, pot.playerStatus(sender) ); break;
+                    case "currentgm":   sendMessage(channel, listGm() ); break;
+                    case "gmlist":      sendMessage(channel, listGm() ); break;
+                    case "sr":          shadowrunDice(message, channel, sender); break;
+                    case "exalted":     exaltedDice(message, channel, sender); break;
+                    case "wild":        wildDice(message, channel, sender); break;
+                    case "sw":          savageDice(message, channel, sender); break;
+                    case "swarm":       swarmDice(message, channel, sender); break;
+                    case "notify":      notifyPlayer(args, channel, sender); break;
+                    case "magic8ball":  sendMessage(channel, magic8Ball()); break;
+                    case "sound":       notifyPlayerSound(args, channel, sender); break;
+                    case "soundfile":   setNotifySound(args, channel, sender); break;
+                    case "rollfor":     rollForNpc(args, channel, sender); break;
+                    case "rollmod":     rollMod(args, channel, sender, message, dStart); break;
+                    case "edit":        if (isGm(sender)) { editInit(args, channel, sender); break; }
+                    case "scram":       if (isGm(sender)) { scram(channel); break; }
+                    case "fudge":       fudgeDice(args, channel, sender); break;
+                    case "fate":        fateDice(args, channel, sender); break;
+                    case "list":        if (isGm(sender)) { listInit(args, channel); break; }
+                    case "hand":        cardHand(args, channel, sender); break;
+                    case "dealup":      cardDeal(args, channel, sender); break;
+                    case "deckadd":     cardAddPlayer(args, channel, sender); break;
+                    case "deckremove":  cardRemovePlayer(args, channel, sender); break;
+                    case "deckreset":   cardReset(args, channel, sender); break;
+                    case "collect":     cardCollect(args, channel); break;
+                    case "cardlist":    cardList(args, channel); break;
+                    case "decklist":    deckList(args, channel); break;
+                    case "shuffle":     cardShuffle(args, channel); break;
+                    case "chargen":     characterGeneration(args, channel); break;
+                    case "makedeck":    makeDeck(args, channel); break;
+                    case "remove":      initRemove(args, channel); break;
+                    case "newchar":     characterNew(args, channel, sender); break;
+                    case "advance":     characterAdvance(args, channel, sender); break;
+                    case "deposit":     characterDepositMoney(args, channel, sender); break;
+                    case "spend":       characterSpendMoney(args, channel, sender); break;
+                    case "deduct":      characterDeductMoney(args, channel, sender); break;
+                    case "ct":          ctDice(args, channel, sender); break;
+                    case "gettotals":   characterGetTotals(channel, sender); break;
+                    case "totals":      characterGetTotals(channel, sender); break;
+                    case "status":      characterGetTotals(channel, sender); break;
 
                 }
             }
@@ -1941,35 +1941,6 @@ public class FBot extends PircBot
     public void rollDice(String[] args, boolean dStart, String channel, String sender)
     {
         String usageMessage = "!roll [rolls] [Dice Equation] <Table>  xdy rolls x dice size y.  e denotes an exploding dice (Max value rerolled). xey.";
-        String daMessage = "";
-        int total = 0;
-
-       // Optional<Integer> rollTimes = Optional.absent();
-       // Optional<String> formula = Optional.absent();
-       // Optional<String> tableName = Optional.absent();
-//
-////        if ( args.length < 2 && !dStart )
-////        {
-////            sendMessage( channel, usageMessage );
-////            return;
-////        }
-//
-//        if ( args.length >= 3 )
-//            tableName = Optional.fromNullable(args[3]);
-//
-//        if ( args.length < 2 && isEquation(args[1]) )
-//            formula = Optional.fromNullable(args[1]);
-//        else if ( isInt(args[1]) && isEquation(args[2]) )
-//        {
-//            rollTimes = Optional.fromNullable(Integer.parseInt(args[1]));
-//            formula = Optional.fromNullable(args[2]);
-//        }
-//        else
-//        {
-//            sendMessage( channel, usageMessage );
-//            return;
-//        }
-
         // Tries to find three possible arguments.
         // Rolls the specified number of times or once
         // Rolls the given formula
@@ -1982,7 +1953,7 @@ public class FBot extends PircBot
         for (int i = 1; i < args.length; i++)
         {
           if (!rollTimes.isPresent() && isInt(args[i]))
-            rollTimes = Optional.fromNullable(Integer.tryParse(args[i]));
+            rollTimes = Optional.fromNullable(Integer.parseInt(args[i]));
           else if (!formula.isPresent() && isEquation(args[i]))
             formula = Optional.fromNullable(args[i]);
           else if(!tableName.isPresent() && hasTable(args[i]))
@@ -1991,159 +1962,73 @@ public class FBot extends PircBot
 
         if (formula.isPresent())
         {
-          String tally = "";
-          int total = 0;
-          for (int i = rollTimes.or(1); i > 0; i--)
-          {
-            int current = parseOne(formula.get());
-            total += current;
-            tally += " " + String.valueOf(current);
-          }
-
-          if (tableName.isPresent())
-          {
-
-          }
-        }
-        else
-        {
-          sendMessage( channel, usageMessage );
-          return;
-        }
-
-        
-
-        // OLD
-        if ( args.length > 2 && isInt(args[1]) )
-        {
-            if ( !isEquation( args[2] ) )
-            {
-                if (!dStart)
-                    sendMessage( channel, usageMessage );
-                return;
-            }
             String tally = "";
-            int i = 0;
-            int gwah = getInt( args[1] );
-            while ( gwah > 0 )
+            int total = 0;
+            for (int i = rollTimes.or(1); i > 0; i--)
             {
-                i=parseOne(args[2]);
-                total+=i;
-                tally=tally+" "+i;
-                gwah--;
+                int current = parseOne(formula.get());
+                total += current;
+                tally += " " + String.valueOf(current);
             }
-            daMessage = "rolled " + args[2] + " for " + sender + " and got (" + tally + " ) for a total of: " + total;
-            if ( args.length > 3 )
-            {
-                if ( !hasTable(args[3]) )
-                {
-                    sendAction( channel, daMessage );
-                    return;
-                }
-                else
-                {
-                    RollValue r = new RollValue( sender, total, 0 );
-                    RollSort x = getTable(args[3]);
-                    x.addValue(r);
-                    x.sortList();
-                    addTable(x);
-                    sendAction( channel, daMessage + " added to " + args[3] );
-                    return;
-                }
-            }
-            sendAction( channel, daMessage );
-            return;
-        }
-        if ( isEquation(args[1]) )
-        {
-            total = parseOne(args[1]);
-        }
-        else
-        {
-            if (!dStart)
-                sendMessage( channel, usageMessage );
-            return;
-        }
-        daMessage = "rolled " + args[1] + " for " + sender + " and got " + total;
-        if ( args.length > 2 )
-        {
-            if ( !hasTable(args[2]) )
-            {
-                sendAction( channel, daMessage );
-                return;
-            }
-            else
+
+            String ifTallyIsOverOne = "";
+            if (rollTimes.or(1) > 1)
+                ifTallyIsOverOne = String.format(" (%s ) for a total of", tally);
+
+            String ifAddedToATable = "";
+            if (tableName.isPresent())
             {
                 RollValue r = new RollValue( sender, total, 0 );
-                RollSort x = getTable(args[2]);
+                RollSort x = getTable(tableName.get());
                 x.addValue(r);
                 x.sortList();
                 addTable(x);
-                sendAction( channel, daMessage + " added to " + args[2] );
-                return;
+                ifAddedToATable = " added to " + tableName.get();
             }
+            sendAction( channel, String.format("rolled %s for %s and got%s: %s%s", formula.get(), sender, ifTallyIsOverOne, total, ifAddedToATable) );
         }
-        sendAction( channel, daMessage );
-        return;
+        else
+            sendMessage( channel, usageMessage );
     }
 
     public void joinChannel(String[] args, String channel, String sender)
     {
         if ( args.length < 2 )
-        {
             sendMessage( channel, "!join [Channel]" );
-            return;
+        else
+        {
+            joinChannel( args[1] );
+            sendAction( args[1], getJoin(sender) );
         }
-        joinChannel( args[1] );
-        sendAction( args[1], getJoin(sender) );
     }
 
     public void heroDamage(String[] args, String channel, String sender)
     {
         if (args.length <2 )
-        {
             sendMessage( channel, "!hd [number of dice] [modifier] accepts half dice values such as 4.5.  Teal die is half die." );
-            return;
-        }
         else if ( args.length < 3 )
-        {
             sendAction( channel, Dice.heroDamage(getDouble(args[1]), 0, sender ) );
-            return;
-        }
         else
-        {
             sendAction( channel, Dice.heroDamage(getDouble(args[1]), getInt(args[2]), sender ) );
-            return;
-        }
     }
 
     public void heroAttack(String[] args, String channel, String sender)
     {
         if ( args.length < 2 )
-        {
             sendMessage( channel, "!ha [OCV] Rolls an attack using the HERO system.");
-            return;
-        }
         else
-        {
             sendAction( channel, Dice.heroAttack( getInt(args[1]), sender )  );
-            return;
-        }
     }
 
     public void westDice(String[] args, String channel, String sender)
     {
         if ( args.length < 2 )
-        {
             sendMessage( channel, "!wg [number of dice] [modifier] Makes a roll using Westend Games d6 system." );
-            return;
-        }
         else if ( args.length < 3 )
         {
             int dice = getInt(args[1]);
             String output = Dice.westDice(dice, 0, sender );
             sendAction( channel, output );
-            return;
         }
         else
         {
@@ -2151,101 +2036,73 @@ public class FBot extends PircBot
             int mod = getInt(args[2]);
             String output = Dice.westDice(dice, mod, sender );
             sendAction( channel, output );
-            return;
         }
     }
 
     public void wonderWand(String[] args, String channel)
     {
         if (args.length < 2 )
-        {
             sendMessage( channel, wonder(false));
-            return;
-        }
+        else if (args[1].equalsIgnoreCase("expanded"))
+            sendMessage( channel, wonder(true));
         else
-        {
-            if (args[1].equalsIgnoreCase("expanded"))
-            {
-                sendMessage( channel, wonder(true));
-                return;
-            }
-            else
-            {
-                sendMessage( channel, wonder(true));
-                return;
-            }
-        }
+            sendMessage( channel, wonder(true));
     }
 
     public void addGM(String[] args, String channel, String sender)
     {
-        if ( !isGm(sender) )
-            return;
-        if ( args.length < 2 )
-        {
-            sendMessage( channel, "Useage:  !addgm <name>" );
-            return;
-        }
-        else
+        if ( isGm(sender) && args.length >= 2 )
         {
             setGm(args[1]);
             sendMessage( channel, args[1] + " was added to the list of gms.");
             saveGMs();
-            return;
         }
+        else
+            sendMessage( channel, "Useage:  !addgm <name>" );
     }
 
     public void NPC(String[] args, String channel)
     {
         if ( args.length < 4 || !isRoll(args[2]) || !hasTable(args[3]) )
-        {
             sendMessage( channel, "Useage:  !npc <npc name> xdy+z <table name>" );
-            return;
+        else
+        {
+            RollSort table = getTable(args[3]);
+            int roll = rollerInt(args[2]);
+            table.addRoll(args[1], roll, getMod(args[2]));
+            addTable(table);
+            sendAction(channel, "rolled a (" + args[2] + ") for " + args[1] + " and got: " + roll + " added to " + args[3] );
         }
-        RollSort x = getTable(args[3]);
-        int roll = rollerInt(args[2]);
-        x.addRoll(args[1], roll, getMod(args[2]));
-        addTable(x);
-        sendAction(channel, "rolled a (" + args[2] + ") for " + args[1] + " and got: " + roll + " added to " + args[3] );
     }
 
     public void save(String channel)
     {
-        boolean monkeh = saveGMs();
-        if (!monkeh)
-            sendMessage( channel, "Error saving to file!" );
-        else
-            sendAction( channel, "saves the current list of gms.");
-        monkeh = saveProfiles();
-        if (!monkeh)
-            sendMessage( channel, "Error saving to file!" );
-        else
-            sendAction( channel, "saves the current list of profiles.");
+        String gmSaveResult = "Saved GMs to file";
+        if (!saveGMs())
+            gmSaveResult = "Could not save GMs to file";
+
+        String profileSaveResult = "Saved profiles to file";
+        if (!saveProfiles())
+            profileSaveResult = "Could not save profiles to file";
+
+        sendMessage( channel, String.format("%s; %s!", gmSaveResult, profileSaveResult));
     }
 
     public void useFateChip(String[] args, String channel, String sender)
     {
         String report = "";
         if ( args.length < 2 )
-        {
             sendMessage( channel, "Useage:  !use <color>" );
-            return;
-        }
-        else if ( args[1].equalsIgnoreCase("white") )
+        else
         {
-            report = pot.useWhite(sender);
-        }
-        else if ( args[1].equalsIgnoreCase("red") )
-        {
-            report = pot.useRed(sender);
-        }
-        else if ( args[1].equalsIgnoreCase("blue") )
-        {
-            report = pot.useBlue(sender);
-        }
-        else if ( args[1].equalsIgnoreCase("legend") )
-        {
-            report = pot.useLegend(sender);
+            if ( args[1].equalsIgnoreCase("white") )
+                report = pot.useWhite(sender);
+            else if ( args[1].equalsIgnoreCase("red") )
+                report = pot.useRed(sender);
+            else if ( args[1].equalsIgnoreCase("blue") )
+                report = pot.useBlue(sender);
+            else if ( args[1].equalsIgnoreCase("legend") )
+                report = pot.useLegend(sender);
         }
         sendMessage( channel, report );
     }
@@ -2253,62 +2110,47 @@ public class FBot extends PircBot
     public void startInit(String[] args, String channel)
     {
         if ( args.length < 2 )
-        {
             sendMessage(channel, "Useage:  !start <list>");
-            return;
-        }
-        if ( !hasTable(args[1]) )
-        {
+        else if ( !hasTable(args[1]) )
             sendMessage(channel, "That list does not exist.");
-            return;
+        else
+        {
+            RollSort table = getTable(args[1]);
+            table.topOrder();
+            addTable(table);
+            sendMessage(channel, "It's now top of the order, use the !next command to cycle through list.");
         }
-        RollSort x = getTable(args[1]);
-        x.topOrder();
-        addTable(x);
-        sendMessage(channel, "It's now top of the order, use the !next command to cycle through list.");
-        return;
     }
 
     public void nextInit(String[] args, String channel)
     {
         if ( args.length < 2 )
-        {
             sendMessage(channel, "Useage:  !next <list>");
-            return;
-        }
-        if ( !hasTable(args[1]) )
-        {
+        else if ( !hasTable(args[1]) )
             sendMessage(channel, "That list does not exist.");
-            return;
-        }
-        RollSort x = getTable(args[1]);
-        RollValue v = x.getCurrent();
-        String current = v.getName();
-        x.nextPos();
-        v = x.getCurrent();
-        String next = v.getName();
-        addTable(x);
-        sendMessage(channel, "" + current + "'s turn!  Next is " + next + "." );
-        if (notifyMe(current))
+        else
         {
-            sendMessage(current, "Your turn has come up.");
+            RollSort table = getTable(args[1]);
+            RollValue currentRoll = table.getCurrent();
+            String current = currentRoll.getName();
+            table.nextPos();
+            currentRoll = table.getCurrent();
+            String next = currentRoll.getName();
+            addTable(table);
+            sendMessage(channel, "" + current + "'s turn!  Next is " + next + "." );
+            if (notifyMe(current))
+                sendMessage(current, "Your turn has come up.");
+            if (beepMe(current))
+                sendCTCPCommand(current, "SOUND " + getSFile(current) );
         }
-        if (beepMe(current))
-        {
-            sendCTCPCommand(current, "SOUND " + getSFile(current) );
-        }
-        return;
     }
 
     public void fatePotPut(String[] args, String channel, String sender)
     {
         if ( !isGm(sender) )
             return;
-        if ( args.length < 2 )
-        {
+        else if ( args.length < 2 )
             sendMessage( channel, "Useage:  !potput <color>" );
-            return;
-        }
         else if ( args[1].equalsIgnoreCase( "white" ) )
         {
             pot.addWhite();
@@ -2330,20 +2172,15 @@ public class FBot extends PircBot
             sendMessage( channel, sender + " tossed a legend chip into the pot." );
         }
         else
-        {
             sendMessage( channel, "Useage: !potput <color>" );
-        }
     }
 
     public void fatePotAdd(String[] args, String channel, String sender)
     {
         if ( !isGm(sender) )
             return;
-        if ( args.length < 2 )
-        {
+        else if ( args.length < 2 )
             sendMessage( channel, "Give a name to add to the Fate Pot." );
-            return;
-        }
         else
         {
             pot.addPlayer( args[1] );
@@ -2353,10 +2190,11 @@ public class FBot extends PircBot
 
     public void fatePotReset(String channel, String sender)
     {
-        if ( !isGm(sender) )
-            return;
-        pot.potReset();
-        sendMessage( channel, "Done." );
+        if ( isGm(sender) )
+        {
+            pot.potReset();
+            sendMessage( channel, "Done." );
+        }
     }
 
     public void fatePotDraw(String[] args, String channel, String sender)
@@ -2365,14 +2203,8 @@ public class FBot extends PircBot
         String report;
         if ( args.length > 1)
         {
-            try
-            {
-                draws = Integer.parseInt( args[1] );
-            }
-            catch (Exception e)
-            {
-                draws = 1;
-            }
+            try { draws = Integer.parseInt( args[1] ); }
+            catch (Exception e) { /* Do nothing */ }
         }
         for ( int i = 0; i < draws; i++ )
         {
@@ -2383,53 +2215,23 @@ public class FBot extends PircBot
 
     public void fatePotSetChipAmounts(String[] args, String channel)
     {
-        int w = 0;
-        int r = 0;
-        int b = 0;
-        int l = 0;
-        if ( args.length < 5 )
-        {
-            sendMessage(channel, "useage !potset <white> <red> <blue> <legend>" );
-            return;
-        }
         try
         {
-            w = Integer.parseInt( args[1] );
+            if ( args.length < 5 )
+                throw new Exception("Invalid number of arguments.");
+
+            int w = Integer.parseInt( args[1] );
+            int r = Integer.parseInt( args[2] );
+            int b = Integer.parseInt( args[3] );
+            int l = Integer.parseInt( args[4] );
+
+            pot.setChips( w, r, b, l );
+            sendMessage(channel, "Chips set." );
         }
         catch (Exception e)
         {
             sendMessage(channel, "useage !potset <white> <red> <blue> <legend>" );
-            return;
         }
-        try
-        {
-            r = Integer.parseInt( args[2] );
-        }
-        catch (Exception e)
-        {
-            sendMessage(channel, "useage !potset <white> <red> <blue> <legend>" );
-            return;
-        }
-        try
-        {
-            b = Integer.parseInt( args[3] );
-        }
-        catch (Exception e)
-        {
-            sendMessage(channel, "useage !potset <white> <red> <blue> <legend>" );
-            return;
-        }
-        try
-        {
-            l = Integer.parseInt( args[4] );
-        }
-        catch (Exception e)
-        {
-            sendMessage(channel, "useage !potset <white> <red> <blue> <legend>" );
-            return;
-        }
-        pot.setChips( w, r, b, l );
-        sendMessage(channel, "Chips set." );
     }
 
     public void shadowrunDice(String message, String channel, String sender)
@@ -2479,90 +2281,91 @@ public class FBot extends PircBot
 
     public void notifyPlayer(String[] args, String channel, String sender)
     {
-        if (args.length<2)
+        String usageMessage = "Useage:  !notify yes/no";
+        if (args.length < 2)
+            sendMessage(channel, usageMessage);
+        else
         {
-            sendMessage(channel, "Useage:  !notify yes/no");
-            return;
-        }
-        if ( args[1].equalsIgnoreCase("yes") || args[1].equalsIgnoreCase("1") || args[1].equalsIgnoreCase("true") || args[1].equalsIgnoreCase("on") )
-        {
-            if (!hasProfile(sender))
-                addProfile(sender);
-            setNotice(sender,true);
-            sendMessage(channel, "Notification turned on for " + sender);
-            saveProfiles();
-            return;
-        }
-        if (args[1].equalsIgnoreCase("no") || args[1].equalsIgnoreCase("0") || args[1].equalsIgnoreCase("false") || args[1].equalsIgnoreCase("off") )
-        {
-            if (!hasProfile(sender))
-                addProfile(sender);
-            setNotice(sender,false);
-            sendMessage(channel, "Notification turned off for " + sender);
-            saveProfiles();
-            return;
+            if ( args[1].equalsIgnoreCase("yes") || args[1].equalsIgnoreCase("1") || args[1].equalsIgnoreCase("true") || args[1].equalsIgnoreCase("on") )
+            {
+                if (!hasProfile(sender))
+                    addProfile(sender);
+                setNotice(sender,true);
+                sendMessage(channel, "Notification turned on for " + sender);
+                saveProfiles();
+            }
+            else if (args[1].equalsIgnoreCase("no") || args[1].equalsIgnoreCase("0") || args[1].equalsIgnoreCase("false") || args[1].equalsIgnoreCase("off") )
+            {
+                if (!hasProfile(sender))
+                    addProfile(sender);
+                setNotice(sender,false);
+                sendMessage(channel, "Notification turned off for " + sender);
+                saveProfiles();
+            }
+            else
+                sendMessage(channel, usageMessage);
         }
     }
 
     public void notifyPlayerSound(String[] args, String channel, String sender)
     {
-        if (args.length<2)
+        String soundFileWarning = "Be sure to use !soundfile to set a sound file to play";
+        String usageMessage = "Useage:  !sound yes/no; " + soundFileWarning;
+        if (args.length < 2)
         {
-            sendMessage(channel, "Useage:  !sound yes/no be sure to use !soundfile to set a soundfile to play");
-            return;
+            sendMessage(channel, usageMessage);
         }
-        if ( args[1].equalsIgnoreCase("yes") || args[1].equalsIgnoreCase("1") || args[1].equalsIgnoreCase("true") || args[1].equalsIgnoreCase("on") )
+        else
         {
-            if (!hasProfile(sender))
-                addProfile(sender);
-            setSonic(sender,true);
-            sendMessage(channel, "Sound notification turned on for " + sender+".  Be sure to use !soundfile to set a file to play.");
-            saveProfiles();
-            return;
-        }
-        if (args[1].equalsIgnoreCase("no") || args[1].equalsIgnoreCase("0") || args[1].equalsIgnoreCase("false") || args[1].equalsIgnoreCase("off") )
-        {
-            if (!hasProfile(sender))
-                addProfile(sender);
-            setSonic(sender,false);
-            saveProfiles();
-            sendMessage(channel, "Sound notification turned off for " + sender);
-            return;
+            if ( args[1].equalsIgnoreCase("yes") || args[1].equalsIgnoreCase("1") || args[1].equalsIgnoreCase("true") || args[1].equalsIgnoreCase("on") )
+            {
+                if (!hasProfile(sender))
+                    addProfile(sender);
+                setSonic(sender,true);
+                sendMessage(channel, "Sound notification turned on for " + sender + ". " + soundFileWarning);
+                saveProfiles();
+            }
+            else if (args[1].equalsIgnoreCase("no") || args[1].equalsIgnoreCase("0") || args[1].equalsIgnoreCase("false") || args[1].equalsIgnoreCase("off") )
+            {
+                if (!hasProfile(sender))
+                    addProfile(sender);
+                setSonic(sender,false);
+                saveProfiles();
+                sendMessage(channel, "Sound notification turned off for " + sender);
+            }
+            else
+                sendMessage(channel, usageMessage);
         }
     }
 
     public void setNotifySound(String[] args, String channel, String sender)
     {
-        if (args.length<2)
+        String soundFileWarning = "If you are running mIRC it should be located in your mirc/sound/ folder.";
+        if (args.length < 2)
+            sendMessage(channel, "Useage:  !soundfile filename.wav; " + soundFileWarning);
+        else
         {
-            sendMessage(channel, "Useage:  !soundfile filename.wav you must have the file in the appropraite folder for your IRC client to play.");
-            return;
+            if (!hasProfile(sender))
+                addProfile(sender);
+            setSFile(sender,args[1]);
+            sendMessage(channel, "Sound file for " + sender + " has been set. " + soundFileWarning);
+            saveProfiles();
         }
-        if (!hasProfile(sender))
-            addProfile(sender);
-        setSFile(sender,args[1]);
-        sendMessage(channel, "Sound file for " + sender + " has been set.  If you are running mirc it should be located in your mirc/sound/ folder.");
-        saveProfiles();
-        return;
     }
 
     public void rollForNpc(String[] args, String channel, String sender)
     {
-        if ( !isGm(sender) )
+        if ( isGm(sender) )
         {
-            return;
-        }
-        if ( args.length < 2 )
-        {
-            sendMessage( channel, "Useage:  !rollfor <table>" );
-            return;
-        }
-        else
-        {
-            String s = args[1];
-            RollSort x = new RollSort(s);
-            addTable(x);
-            sendMessage( channel, sender + " has requested a roll for " + s + "." );
+            if ( args.length < 2 )
+                sendMessage( channel, "Useage:  !rollfor <table>" );
+            else
+            {
+                String tableName = args[1];
+                RollSort table = new RollSort(tableName);
+                addTable(table);
+                sendMessage( channel, sender + " has requested a roll for " + tableName + "." );
+            }
         }
     }
 
@@ -2607,6 +2410,7 @@ public class FBot extends PircBot
             args = result.split(" ");
             try
             {
+
                 roll = Integer.parseInt(args[args.length-1]);
             }
             catch(Exception e)
