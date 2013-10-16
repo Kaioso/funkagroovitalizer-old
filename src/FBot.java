@@ -1944,9 +1944,9 @@ public class FBot extends PircBot
         String daMessage = "";
         int total = 0;
 
-//        Optional<Integer> rollTimes = Optional.absent();
-//        Optional<String> formula = Optional.absent();
-//        Optional<String> tableName = Optional.absent();
+       // Optional<Integer> rollTimes = Optional.absent();
+       // Optional<String> formula = Optional.absent();
+       // Optional<String> tableName = Optional.absent();
 //
 ////        if ( args.length < 2 && !dStart )
 ////        {
@@ -1970,6 +1970,48 @@ public class FBot extends PircBot
 //            return;
 //        }
 
+        // Tries to find three possible arguments.
+        // Rolls the specified number of times or once
+        // Rolls the given formula
+        // Adds it to the given table
+        // Only the formula is required
+        Optional<Integer> rollTimes = Optional.absent();
+        Optional<String> formula = Optional.absent();
+        Optional<String> tableName = Optional.absent();
+
+        for (int i = 1; i < args.length; i++)
+        {
+          if (!rollTimes.isPresent() && isInt(args[i]))
+            rollTimes = Optional.fromNullable(Integer.tryParse(args[i]));
+          else if (!formula.isPresent() && isEquation(args[i]))
+            formula = Optional.fromNullable(args[i]);
+          else if(!tableName.isPresent() && hasTable(args[i]))
+            tableName = Optional.fromNullable(args[i]);
+        }
+
+        if (formula.isPresent())
+        {
+          String tally = "";
+          int total = 0;
+          for (int i = rollTimes.or(1); i > 0; i--)
+          {
+            int current = parseOne(formula.get());
+            total += current;
+            tally += " " + String.valueOf(current);
+          }
+
+          if (tableName.isPresent())
+          {
+
+          }
+        }
+        else
+        {
+          sendMessage( channel, usageMessage );
+          return;
+        }
+
+        
 
         // OLD
         if ( args.length > 2 && isInt(args[1]) )
