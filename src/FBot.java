@@ -2507,632 +2507,456 @@ public class FBot extends PircBot
         }
         else
         {
-            String s = args[1];
-            if (!hasTable(s))
-            {
+            String tableName = args[1];
+            if (!hasTable(tableName))
                 sendMessage( channel, "Sorry, that table does not exist");
-                return;
-            }
-            RollSort x = getTable(s);
-            x.sortList();
-            String[] output = x.getList();
-            sendMessage( channel, "List for " + s + ":");
-            for ( int i = 0; i < output.length; i++)
+            else
             {
-                sendMessage( channel, output[i] );
+                RollSort table = getTable(tableName);
+                table.sortList();
+                String[] output = table.getList();
+                sendMessage( channel, "List for " + tableName + ":");
+                for ( int i = 0; i < output.length; i++ )
+                    sendMessage( channel, output[i] );
             }
         }
     }
 
     public void cardHand(String[] args, String channel, String sender)
     {
-        int[] hand = new int[0];
+        String deckName = "Master";
+        if (args.length >= 2)
+            deckName = args[1];
         boolean found = false;
-        String report = "";
-        if ( args.length < 2 )
+        for (Deck deck : decks)
         {
-            for (int i = 0; i < decks.size(); i++)
+            if ( deck.getName().equals( deckName ) )
             {
-                Deck deck = decks.get(i);
-                if ( deck.getName().equals( "Master" ) )
+                found = true;
+                int[] hand = deck.getHand("sender");
+                if (hand.length < 1)
+                    sendMessage(channel, sender + " has no cards." );
+                else
                 {
-                    i = decks.size();
-                    found = true;
-                    hand = deck.getHand("sender");
+                    String report = "";
+                    for (int cardNumber : hand)
+                        report += " " + Deck.cardName(cardNumber);
+                    sendMessage(channel, sender + " currently has in his hand" + report );
                 }
+                break;
             }
-        }
-        else
-        {
-            for (int i = 0; i < decks.size(); i++)
-            {
-                Deck deck = decks.get(i);
-                if ( deck.getName().equals( args[1] ) )
-                {
-                    i = decks.size();
-                    found = true;
-                    hand = deck.getHand("sender");
-                }
-            }
-        }
-        if ( !found )
-        {
-            sendMessage(channel, "Deck not found.");
-            return;
         }
 
-        if ( hand.length < 1 )
-        {
-            sendMessage(channel, sender + " has no cards." );
-            return;
-        }
-        for ( int i = 0; i < hand.length; i++)
-        {
-            report = report + " " + Deck.cardName(hand[i]);
-        }
-        sendMessage(channel, sender + " currently has in his hand" + report );
+        if (!found)
+            sendMessage(channel, "Deck not found.");
     }
 
     public void cardDeal(String[] args, String channel, String sender)
     {
-        if ( !isGm(sender) )
-            return;
-        String deck = "Master";
-        boolean found = false;
-        Deck d = new Deck();
-        int pos = 0;
-        String report = "";
         if ( args.length < 2 )
-        {
             sendMessage(channel, "Useage: !dealup name [deck]" );
-            return;
-        }
-        String victim = args[1];
-        if ( args.length > 2 )
-            deck = args[2];
-        for (int i = 0; i < decks.size(); i++)
+        else if ( isGm(sender) )
         {
-            d = decks.get(i);
-            if ( d.getName().equals(deck) )
+            String deckName = "Master";
+            if ( args.length > 2 )
+                deckName = args[2];
+            String victim = args[1];
+
+            boolean found = false;
+            for (Deck deck : decks)
             {
-                pos = i;
-                i = decks.size();
-                found = true;
+                if ( deck.getName().equals(deckName) )
+                {
+                    found = true;
+                    if ( victim.equalsIgnoreCase("all") )
+                    {
+                        deck.dealAll();
+                        String[] reports = deck.listPlayers();
+                        sendMessage(channel, "Cardlist for deck " + deckName);
+                        for ( int i = reports.length-1; i > -1; i--)
+                            sendMessage(channel, reports[i] );
+                    }
+                    else 
+                    {
+                        if ( !deck.hasPlayer(victim) )
+                        {
+                            sendMessage(channel, "Adding " + victim + " to " + deckName + " deck.");
+                            deck.addPlayer(victim);
+                        }
+                        sendAction(channel, deck.deal(victim));
+                    }
+                    break;
+                }
             }
+            if ( !found )
+                sendMessage(channel, "Deck not found.");
         }
-        if ( !found )
-        {
-            sendMessage(channel, "Deck not found.");
-            return;
-        }
-        else if ( args[1].equalsIgnoreCase("all") )
-        {
-            d.dealAll();
-            String [] reports = d.listPlayers();
-            sendMessage(channel, "Cardlist for deck " + deck);
-            for ( int i = reports.length-1; i > -1; i--)
-            {
-                sendMessage(channel, reports[i] );
-            }
-            decks.set(pos, d);
-            return;
-        }
-        else if ( !d.hasPlayer(victim) )
-        {
-            sendMessage(channel, "Adding " + victim + " to " + deck + " deck.");
-            d.addPlayer(victim);
-        }
-        report = d.deal(victim);
-        sendAction(channel, report);
-        decks.set(pos, d);
     }
 
     public void cardAddPlayer(String[] args, String channel, String sender)
     {
-        if ( !isGm(sender) )
-            return;
-        String deck = "Master";
-        int pos = -1;
-        Deck d = new Deck();
         if ( args.length < 2 )
-        {
             sendMessage( channel, "Useage:  !deckadd <player> [deck]" );
-            return;
-        }
-        else if ( args.length > 2 )
+        else if ( isGm(sender) )
         {
-            deck = args[2];
-        }
-        for (int i = 0; i < decks.size(); i++)
-        {
-            d = decks.get(i);
-            if ( d.getName().equals(deck) )
+            String deckName = "Master";
+            if ( args.length > 2 )
+                deckName = args[2];
+
+            boolean found = false;
+            for (Deck deck : decks)
             {
-                pos = i;
-                i = decks.size();
+                if ( deck.getName().equals(deckName) )
+                {
+                    found = true;
+                    deck.addPlayer(args[1]);
+                    sendMessage( channel, args[1] + " added to " + deckName + ".");
+                    break;
+                }
             }
+            if ( !found )
+                sendMessage(channel, "Deck not found.");
         }
-        if ( pos < 0 )
-        {
-            sendMessage(channel, "Deck not found.");
-            return;
-        }
-        d.addPlayer(args[1]);
-        decks.set(pos, d);
-        sendMessage( channel, args[1] + " added to " + deck + ".");
     }
 
     public void cardRemovePlayer(String[] args, String channel, String sender)
     {
-        if ( !isGm(sender) )
-            return;
-        String deck = "Master";
-        int pos = -1;
-        Deck d = new Deck();
         if ( args.length < 2 )
-        {
             sendMessage( channel, "Useage:  !deckremove <player> [deck]" );
-            return;
-        }
-        else if ( args.length > 2 )
+        else if ( isGm(sender) )
         {
-            deck = args[2];
-        }
-        for (int i = 0; i < decks.size(); i++)
-        {
-            d = decks.get(i);
-            if ( d.getName().equals(deck) )
+            String deckName = "Master";
+            if ( args.length > 2 )
+                deckName = args[2];
+
+            boolean found = false;
+            for (Deck deck : decks)
             {
-                pos = i;
-                i = decks.size();
+                if ( deck.getName().equals(deckName) )
+                {
+                    found = true;
+                    if ( !deck.hasPlayer( args[1] ) )
+                        sendMessage(channel, args[1] + " is not assigned to this deck." );
+                    else
+                    {
+                        deck.removePlayer(args[1]);
+                        sendMessage( channel, args[1] + " removed from " + deck + ".");
+                    }
+                    break;
+                }
             }
+            if ( !found )
+                sendMessage(channel, "Deck not found.");
         }
-        if ( pos < 0 )
-        {
-            sendMessage(channel, "Deck not found.");
-            return;
-        }
-        else if ( !d.hasPlayer( args[1] ) )
-        {
-            sendMessage(channel, args[1] + " is not assigned to this deck." );
-            return;
-        }
-        d.removePlayer(args[1]);
-        decks.set(pos, d);
-        sendMessage( channel, args[1] + " removed from " + deck + ".");
     }
 
     public void cardReset(String[] args, String channel, String sender)
     {
-        if ( !isGm(sender) )
-            return;
-        Deck d = new Deck();
-        String deck = "Master";
-        int pos = -1;
-        if ( args.length > 1 )
-            deck = args[1];
-        for (int i = 0; i < decks.size(); i++)
+        if ( isGm(sender) )
         {
-            d = decks.get(i);
-            if ( d.getName().equals(deck) )
+            String deckName = "Master";
+            if ( args.length > 1 )
+                deckName = args[1];
+
+            boolean found = false;
+            for (int i = 0; i < decks.size(); i++)
             {
-                pos = i;
-                i = decks.size();
+                Deck deck = decks.get(i);
+                if ( deck.getName().equals(deckName) )
+                {
+                    found = true;
+                    decks.set( i, new Deck( deck.getName() ) );
+                    sendMessage( channel, "Deck " + deck.getName() + " reset." );
+                    break;
+                }
             }
+            if ( !found )
+                sendMessage(channel, "Deck not found.");
         }
-        if ( pos < 0 )
-        {
-            sendMessage(channel, "Deck not found.");
-            return;
-        }
-        Deck newDeck = new Deck( d.getName() );
-        decks.set( pos, newDeck );
-        sendMessage( channel, "Deck " + d.getName() + " reset." );
     }
 
     public void cardCollect(String[] args, String channel)
     {
-        String victim = "";
-        String deckname = "Master";
-        int pos = 0;
-        boolean found = false;
-        Deck d = new Deck();
-        String report = "";
         if (args.length < 2)
-        {
             sendMessage(channel, "Useage: !collect <target> [deck] typing all will collect from everyone.");
-            return;
-        }
-        victim = args[1];
-        if (args.length > 2 )
-        {
-            deckname = args[2];
-        }
-        for (int i = 0; i < decks.size(); i++)
-        {
-            d = decks.get(i);
-            if (d.getName().equals(deckname))
-            {
-                pos = i;
-                i = decks.size();
-                found = true;
-            }
-        }
-        if ( !found )
-        {
-            sendMessage( channel, "Deck not found.");
-            return;
-        }
-        if (victim.equalsIgnoreCase("all"))
-        {
-            d.collect();
-            decks.set(pos, d);
-            sendAction( channel, "collects all cards for deck " + deckname);
-        }
         else
         {
-            d.collect(victim);
-            decks.set(pos, d);
-            sendAction( channel, "collects " + victim + "'s cards for deck " + deckname);
+            String deckname = "Master";
+            if (args.length > 2 )
+                deckname = args[2];
+
+            boolean found = false;
+            for (Deck deck : decks)
+            {
+                if (deck.getName().equals(deckname))
+                {
+                    found = true;
+                    String victim = args[1];
+                    if (victim.equalsIgnoreCase("all"))
+                    {
+                        deck.collect();
+                        sendAction( channel, "collects all cards for deck " + deckname);
+                    }
+                    else
+                    {
+                        deck.collect(victim);
+                        sendAction( channel, "collects " + victim + "'s cards for deck " + deckname);
+                    }
+                    break;
+                }
+            }
+            if ( !found )
+                sendMessage( channel, "Deck not found.");
+            
         }
     }
 
     public void cardList(String[] args, String channel)
     {
-        String deck = "Master";
-        Deck d = new Deck();
-        boolean found = false;
+        String deckName = "Master";
         if ( args.length > 1 )
-            deck = args[1];
-        for (int i = 0; i < decks.size(); i++)
+            deckName = args[1];
+
+        boolean found = false;
+        for (Deck deck : decks)
         {
-            d = decks.get(i);
-            if ( d.getName().equals(deck) )
+            if ( deck.getName().equals(deckName) )
             {
                 found = true;
-                i = decks.size();
+                String [] report = deck.listPlayers();
+                sendMessage(channel, "Cardlist for deck " + deckName);
+                for ( int i = report.length-1; i > -1; i--)
+                    sendMessage(channel, report[i] );
+                break;
             }
         }
         if ( !found )
-        {
             sendMessage(channel, "Deck not found." );
-            return;
-        }
-        String [] report = d.listPlayers();
-        sendMessage(channel, "Cardlist for deck " + deck);
-        for ( int i = report.length-1; i > -1; i--)
-        {
-            sendMessage(channel, report[i] );
-        }
     }
 
     public void deckList(String[] args, String channel)
     {
-        String deck = "Master";
-        Deck d = new Deck();
-        boolean found = false;
+        String deckName = "Master";
         if ( args.length > 1 )
-            deck = args[1];
-        for (int i = 0; i < decks.size(); i++)
+            deckName = args[1];
+
+        boolean found = false;
+        for (Deck deck : decks)
         {
-            d = decks.get(i);
-            if ( d.getName().equals(deck) )
+            if ( deck.getName().equals(deckName) )
             {
                 found = true;
-                i = decks.size();
+                String [] report = deck.listPlayers();
+                sendMessage(channel, "Cardlist for deck " + deckName);
+                for ( int i = report.length-1; i > -1; i--)
+                    sendMessage(channel, report[i] );
+                break;
             }
         }
         if ( !found )
-        {
             sendMessage(channel, "Deck not found." );
-            return;
-        }
-        String [] report = d.listPlayers();
-        sendMessage(channel, "Cardlist for deck " + deck);
-        for ( int i = report.length-1; i > -1; i--)
-        {
-            sendMessage(channel, report[i] );
-        }
     }
 
     public void cardShuffle(String[] args, String channel)
     {
-        Deck d = new Deck();
-        int pos = 0;
-        String deck = "Master";
-        boolean found = false;
+        String deckName = "Master";
         if ( args.length > 1 )
-            deck = args[1];
+            deckName = args[1];
+
+        boolean found = false;
         for ( int i = 0; i < decks.size(); i++ )
         {
-            d = decks.get(i);
-            if ( d.getName().equals(deck) )
+            if ( deck.getName().equals(deckName) )
             {
                 found = true;
-                pos = i;
-                i = decks.size();
+                deck.shuffle();
+                sendAction(channel, "shuffles deck " + deckName);
+                break;
             }
         }
         if ( !found )
-        {
             sendMessage( channel, "Deck not found.");
-            return;
-        }
-        d.shuffle();
-        decks.set(pos, d);
-        sendAction(channel, "shuffles deck " + deck);
     }
 
     public void characterGeneration(String[] args, String channel)
     {
-        String type;
-        if ( args.length < 2 )
-            type = "";
-        else
+        String type = "";
+        if ( args.length >= 2 )
             type = args[1];
+
         String[] results = genChar(type);
         for (int i = 0; i < results.length; i++)
-        {
             sendMessage(channel, results[i]);
-        }
     }
 
     public void makeDeck(String[] args, String channel)
     {
         if (args.length < 2 )
-        {
             sendMessage(channel, "Useage:  !makedeck <deckname>");
-            return;
-        }
-        for ( int i = 0; i < decks.size(); i++ )
+        else
         {
-            Deck d = decks.get(i);
-            if ( d.getName().equalsIgnoreCase(args[1]) )
+            for ( Deck deck : decks )
             {
-                sendMessage(channel, "Deck " + args[1] + " already exists." );
-                return;
+                if ( deck.getName().equalsIgnoreCase(args[1]) )
+                    sendMessage(channel, "Deck " + args[1] + " already exists." );
+                else
+                {
+                    decks.add(new Deck(args[1]));
+                    sendMessage( channel, "Deck " + args[1] + " created.");
+                }
             }
         }
-        Deck newDeck = new Deck(args[1]);
-        decks.add(newDeck);
-        sendMessage( channel, "Deck " + args[1] + " created.");
     }
 
     public void initRemove(String[] args, String channel)
     {
         if ( args.length < 3 )
-        {
             sendMessage(channel, "Useage:  !remove <name> <list>");
-            return;
-        }
-        if ( !hasTable(args[2]) )
-        {
+        else if ( !hasTable(args[2]) )
             sendMessage(channel, "That list does not exist.");
-            return;
-        }
-        RollSort x = getTable(args[2]);
-        if ( !x.hasName(args[1]) )
+        else
         {
-            sendMessage(channel, "That name is not on the list.");
-            return;
+            RollSort table = getTable(args[2]);
+            if ( !table.hasName(args[1]) )
+                sendMessage(channel, "That name is not on the list.");
+            else
+            {
+                table.removeValue(args[1]);
+                addTable(table);
+                sendAction(channel, "removes " + args[1] + " from " + args[2] + "." );
+            }
         }
-        x.removeValue(args[1]);
-        addTable(x);
-        sendAction(channel, "removes " + args[1] + " from " + args[2] + "." );
     }
 
     public void characterNew(String[] args, String channel, String sender)
     {
-        int game;
+        
         if (args.length < 2 )
-        {
             sendMessage(channel, "Useage: !newchar <game version> version can be 3E 4E SR SW (SW stands for savage worlds, not starwars)");
-            return;
-        }
         else
         {
-            if ( args[1].equalsIgnoreCase("3e") )
-                game = 0;
-            else if ( args[1].equalsIgnoreCase("4e") )
-                game = 1;
-            else if ( args[1].equalsIgnoreCase("SR") )
-                game = 2;
-            else if ( args[1].equalsIgnoreCase("SW") )
-                game = 3;
+            int game = Arrays.asList("3E", "4E", "SR", "SW").indexOf(args[1].toUpper());
+            if (game < 0)
+                sendMessage(channel, "That is not a valid game type, use either 3E 4E SR or SW");
             else
             {
-                sendMessage(channel, "That is not a valid game type, use either 3E 4E SR or SW");
-                return;
+                ExpTot character = new ExpTot(sender, game);
+                addTotal(character);
+                saveTotals();
+                sendMessage(channel, "Character created for " + sender );
             }
         }
-        ExpTot character = new ExpTot(sender, game);
-        addTotal(character);
-        saveTotals();
-        sendMessage(channel, "Character created for " + sender );
-        return;
     }
 
     public void characterAdvance(String[] args, String channel, String sender)
     {
+        int exp = 0;
         if ( !hasTotal(sender) )
-        {
             sendMessage(channel, "There is no character file for you, use !newchar first");
-            return;
-        }
+        else if ( args.length < 2 )
+            sendMessage(channel, "Useage: !advance <experience amount> character is determined by nick");
+        else if ( (exp = getInt(args[1])) == 0 )
+            sendMessage(channel, "Argument must be a non 0 whole number.");
         else
         {
-            if ( args.length < 2 )
-            {
-                sendMessage(channel, "Useage: !advance <experience amount> character is determined by nick");
-                return;
-            }
+            ExpTot player = getTotal(sender);
+            int total = player.advance(exp);
+            int level = player.getLevel();
+            int game = player.getGame();
+            if ( game != 2 )
+                sendMessage(channel, sender + " advanced " + exp + " experience points for a total of " + total + ".  Current level:  "+ level + " TNL:  " + player.tnl() );
             else
-            {
-                int exp = getInt(args[1]);
-                if (exp == 0)
-                {
-                    sendMessage(channel, "Argument must be a non 0 whole number.");
-                    return;
-                }
-                ExpTot player = getTotal(sender);
-                int total = player.advance(exp);
-                int level = player.getLevel();
-                int game = player.getGame();
-                if ( game != 2 )
-                {
-                    sendMessage(channel, sender + " advanced " + exp + " experience points for a total of " + total + ".  Current level:  "+ level + " TNL:  " + player.tnl() );
-                }
-                else
-                    sendMessage(channel, sender + " gets " + exp + " karma for a total of " + total );
-                addTotal(player);
-                saveTotals();
-            }
+                sendMessage(channel, sender + " gets " + exp + " karma for a total of " + total );
+            addTotal(player);
+            saveTotals();
         }
     }
 
     public void characterDepositMoney(String[] args, String channel, String sender)
     {
+        double money = 0;
         if ( !hasTotal(sender) )
-        {
             sendMessage(channel, "There is no character file for you, use !newchar first");
-            return;
-        }
+        else if ( args.length < 2 )
+            sendMessage(channel, "Useage: !deposit <amount> character is determined by nick");
+        else if ( ( money = getDouble( args[1] ) ) == 0 )
+            sendMessage(channel, "Argument must be a non 0 number.");
         else
         {
-            if ( args.length < 2 )
-            {
-                sendMessage(channel, "Useage: !deposit <amount> character is determined by nick");
-                return;
-            }
-            else
-            {
-                double money = getDouble(args[1]);
-                if (money == 0)
-                {
-                    sendMessage(channel, "Argument must be a non 0 number.");
-                    return;
-                }
-                ExpTot player = getTotal(sender);
-                double total = player.deposit(money);
-                addTotal(player);
-                saveTotals();
-                String currency = "";
-                if ( player.getGame() < 2 )
-                    currency = " gp";
-                if ( player.getGame() == 2 )
-                    currency = " nuyen";
-                sendMessage(channel, sender + " deposits " + money + currency + ".   Total Funds: " + total + currency );
-                return;
-            }
+            ExpTot player = getTotal(sender);
+            double total = player.deposit(money);
+            addTotal(player);
+            saveTotals();
+            String currency = "";
+            if ( player.getGame() < 2 )
+                currency = " gp";
+            else if ( player.getGame() == 2 )
+                currency = " nuyen";
+            sendMessage(channel, sender + " deposits " + money + currency + ".   Total Funds: " + total + currency );
         }
     }
 
     public void characterSpendMoney(String[] args, String channel, String sender)
     {
+        double money = 0;
         if ( !hasTotal(sender) )
-        {
             sendMessage(channel, "There is no character file for you, use !newchar first");
-            return;
-        }
+        else if ( args.length < 2 )
+            sendMessage(channel, "Useage: !spend <amount> character is determined by nick");
+        else if ( ( money = getDouble(args[1]) ) == 0 )
+            sendMessage(channel, "Argument must be a non 0 number.");
         else
         {
-            if ( args.length < 2 )
-            {
-                sendMessage(channel, "Useage: !spend <amount> character is determined by nick");
-                return;
-            }
-            else
-            {
-                double money = getDouble(args[1]);
-                if (money == 0)
-                {
-                    sendMessage(channel, "Argument must be a non 0 number.");
-                    return;
-                }
-                ExpTot player = getTotal(sender);
-                double total = player.deduct(money);
-                addTotal(player);
-                saveTotals();
-                String currency = "";
-                if ( player.getGame() < 2 )
-                    currency = " gp";
-                if ( player.getGame() == 2 )
-                    currency = " nuyen";
-                sendMessage(channel, sender + " spends " + money + currency + ".  Total Funds: " + total + currency );
-                return;
-            }
+            ExpTot player = getTotal(sender);
+            double total = player.deduct(money);
+            addTotal(player);
+            saveTotals();
+            String currency = "";
+            if ( player.getGame() < 2 )
+                currency = " gp";
+            else if ( player.getGame() == 2 )
+                currency = " nuyen";
+            sendMessage(channel, sender + " spends " + money + currency + ".  Total Funds: " + total + currency );
         }
     }
 
     public void characterDeductMoney(String[] args, String channel, String sender)
     {
+        double money = 0;
         if ( !hasTotal(sender) )
-        {
             sendMessage(channel, "There is no character file for you, use !newchar first");
-            return;
-        }
+        else if ( args.length < 2 )
+            sendMessage(channel, "Useage: !spend <amount> character is determined by nick");
+        else if ((money = getDouble(args[2])) == 0)
+            sendMessage(channel, "Argument must be a non 0 number.");
         else
         {
-            if ( args.length < 2 )
-            {
-                sendMessage(channel, "Useage: !spend <amount> character is determined by nick");
-                return;
-            }
-            else
-            {
-                double money = getDouble(args[2]);
-                if (money == 0)
-                {
-                    sendMessage(channel, "Argument must be a non 0 number.");
-                    return;
-                }
-                ExpTot player = getTotal(sender);
-                double total = player.deduct(money);
-                addTotal(player);
-                saveTotals();
-                String currency = "";
-                if ( player.getGame() < 2 )
-                    currency = " gp";
-                if ( player.getGame() == 2 )
-                    currency = " nuyen";
-                sendMessage(channel, sender + " deducts " + money + currency + ".  Total Funds: " + total + currency );
-                return;
-            }
+            ExpTot player = getTotal(sender);
+            double total = player.deduct(money);
+            addTotal(player);
+            saveTotals();
+            String currency = "";
+            if ( player.getGame() < 2 )
+                currency = " gp";
+            if ( player.getGame() == 2 )
+                currency = " nuyen";
+            sendMessage(channel, sender + " deducts " + money + currency + ".  Total Funds: " + total + currency );
         }
-
     }
 
     public void ctDice(String[] args, String channel, String sender)
     {
-        if (args.length < 3 )
-        {
+        if (args.length < 3 || !isInt(args[1]) || !isInt(args[2]))
             sendMessage(channel, "Useage:  !ct <skill> <base>" );
-            return;
-        }
-        if ( !isInt(args[1]))
-        {
-            sendMessage(channel, "Useage:  !ct <skill> <base>");
-            return;
-        }
-        if ( !isInt(args[2]))
-        {
-            sendMessage(channel, "Useage:  !ct <skill> <base>");
-            return;
-        }
+
         sendAction(channel, cTRoller(getInt(args[1]), getInt(args[2]), sender));
     }
 
     public void characterGetTotals(String channel, String sender)
     {
         if ( !hasTotal(sender) )
-        {
             sendMessage(channel, "There is no character file for you, use !newchar first");
-            return;
-        }
         else
-        {
-            ExpTot player = getTotal(sender);
-            sendMessage(channel, player.report());
-        }
+            sendMessage(channel, getTotal(sender).report());
     }
 }
