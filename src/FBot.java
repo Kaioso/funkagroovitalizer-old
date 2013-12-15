@@ -832,9 +832,7 @@ public class FBot extends PircBot
    		return results;
    	}
 
-	public static String shadowRoller( String message, String sender )
-	//shadowrun dice roller
-	{
+	public static String shadowRoller( String message, String sender ) { //Shadowrun
 		String[] args = message.split(" ");
         String usageMessage = "Useage: !sr X [edge] Where x is the number of die in pool, and edge applies the rule of sixes.";
 
@@ -844,15 +842,12 @@ public class FBot extends PircBot
         // Get dice arguments
         int pool;
         boolean withEdge;
-        try
-        {
+        try {
             pool = Integer.parseInt ( args[1] );
             // Eliminated a deep nesting with inline boolean logic
             // Short circuit will prevent exception
             withEdge = args.length >= 3 && args[2].equalsIgnoreCase( "edge" );
-        }
-        catch(Exception e)
-        {
+        } catch(Exception e) {
             return usageMessage;
         }
 
@@ -861,21 +856,19 @@ public class FBot extends PircBot
         int die;
         int rolls = 0;
         int glitches = 0;
+        String results = "rolled " + pool + " dice ";
         // This is the rolling
-        while( pool > 0 )
-        {
+        while( pool > 0 ) {
             die = Dice.rollDice( 6 );
             int MAX_ROLL = 6;
             int GLITCH_ROLL = 1;
             int HIT_THRESHOLD = 4;
-            if ( die == MAX_ROLL && withEdge )
-            {
+            if ( die == MAX_ROLL && withEdge ) {
                 // Color die blue
                 diceChain = diceChain.concat(Colors.BLUE);
                 pool++;
             }
-            else if ( die == GLITCH_ROLL )
-            {
+            else if ( die == GLITCH_ROLL ) {
                 // Color die red
                 diceChain = diceChain.concat(Colors.RED);
                 glitches++;
@@ -887,13 +880,11 @@ public class FBot extends PircBot
                 hits++;
             pool--;
         }
-        String results = "rolled " + pool + " dice ";
         if (withEdge)
             results = results.concat( "with edge ");
         results = results.concat( "for " + sender + " and got (" );
         results = results.concat( diceChain + " )  Hits: " + hits );
-        if ( glitches != 0 && rolls / glitches < 2 )
-        {
+        if ( glitches != 0 && rolls / glitches < 2 ) {
             if (hits == 0)
                 results = results.concat( " Critical Glitch!" );
             else
@@ -1987,7 +1978,7 @@ public class FBot extends PircBot
             }
             sendAction( channel, String.format("rolled %s for %s and got%s: %s%s", formula.get(), sender, ifTallyIsOverOne, total, ifAddedToATable) );
         }
-        else
+        else if (!dStart)
             sendMessage( channel, usageMessage );
     }
 
