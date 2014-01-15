@@ -2755,7 +2755,7 @@ public class FBot extends PircBot
             deckName = args[1];
 
         boolean found = false;
-        for ( int i = 0; i < decks.size(); i++ )
+        for (Deck deck : decks)
         {
             if ( deck.getName().equals(deckName) )
             {
@@ -2826,7 +2826,7 @@ public class FBot extends PircBot
             sendMessage(channel, "Useage: !newchar <game version> version can be 3E 4E SR SW (SW stands for savage worlds, not starwars)");
         else
         {
-            int game = Arrays.asList("3E", "4E", "SR", "SW").indexOf(args[1].toUpper());
+            int game = Arrays.asList("3E", "4E", "SR", "SW").indexOf(args[1].toUpperCase());
             if (game < 0)
                 sendMessage(channel, "That is not a valid game type, use either 3E 4E SR or SW");
             else
